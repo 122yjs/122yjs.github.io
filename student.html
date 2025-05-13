@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 우성면 어린이 한마당 만족도 조사 결과 보고서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Tailwind gray-100 */
+        }
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 350px;
+            width: 100%;
+            max-width: 450px;
+        }
+        @media (min-width: 640px) { /* sm breakpoint */
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .content-card {
+            background-color: white;
+            border-radius: 0.5rem; /* rounded-lg */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+            padding: 1.5rem; /* p-6 */
+            margin-bottom: 2rem; /* mb-8 */
+        }
+        .question-title {
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 600; /* font-semibold */
+            margin-bottom: 0.25rem; /* mb-1 */
+            color: #374151; /* text-gray-700 */
+        }
+        .response-count {
+            font-size: 0.875rem; /* text-sm */
+            color: #6b7280; /* text-gray-500 */
+            margin-bottom: 1rem; /* mb-4 */
+        }
+        /* 주관식 응답 그리드 스타일 */
+        .open-ended-response-grid {
+            margin-top: 0.5rem; /* mt-2 */
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* 최소 180px, 공간따라 자동 열 개수 */
+            gap: 0.5rem; /* gap-2, 카드 간 간격 */
+            padding: 0.25rem; /* p-1, 리스트 내부 패딩 */
+            max-height: 20rem; /* h-80, 최대 높이. 필요시 조절 */
+            overflow-y: auto;   /* 내용이 최대 높이를 넘을 경우 세로 스크롤 */
+            border: 1px solid #e5e7eb; /* gray-200, 리스트 전체 테두리 */
+            border-radius: 0.25rem; /* rounded-md */
+        }
+        .response-card { /* 각 응답 카드 스타일 */
+            font-size: 0.75rem;  /* text-xs, 폰트 크기 */
+            color: #4b5563;     /* gray-600, 텍스트 색상 */
+            background-color: #f9fafb; /* gray-50, 배경색 */
+            border: 1px solid #f3f4f6; /* gray-100, 카드 테두리 */
+            border-radius: 0.25rem; /* rounded-md */
+            padding: 0.5rem; /* p-2, 카드 내부 패딩 */
+            word-break: break-word; /* 긴 단어 줄바꿈 */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* 아주 옅은 그림자 */
+            min-height: 40px; /* 카드의 최소 높이, 더 줄임 */
+            display: flex;
+            align-items: flex-start; /* 내용을 위에서부터 채움 */
+            text-align: left;
+        }
+        /* 스크롤바 스타일링 (선택 사항, Webkit 브라우저용) */
+        .open-ended-response-grid::-webkit-scrollbar {
+            width: 8px;
+        }
+        .open-ended-response-grid::-webkit-scrollbar-track {
+            background: #f3f4f6; /* body 배경색과 유사하게 */
+            border-radius: 4px;
+        }
+        .open-ended-response-grid::-webkit-scrollbar-thumb {
+            background: #d1d5db; /* gray-300 */
+            border-radius: 4px;
+        }
+        .open-ended-response-grid::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af; /* gray-400 */
+        }
+
+        .wordcloud-interaction-area {
+            margin-top: 1rem;
+            padding: 1rem;
+            border: 2px dashed #cbd5e1; /* gray-300 */
+            border-radius: 0.375rem; /* rounded-md */
+            text-align: center;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f9fafb; /* gray-50 */
+            cursor: default; /* 기본 커서. 이미지가 삽입되면 pointer로 변경 */
+        }
+        .wordcloud-interaction-area:focus-within {
+             border-color: #3B82F6; /* blue-500 */
+             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
+        }
+        .wordcloud-image-preview {
+            max-width: 100%;
+            max-height: 300px;
+            height: auto;
+            border-radius: 0.25rem; /* rounded-md */
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid #e5e7eb; /* gray-200 */
+            display: none; /* 초기에는 숨김 */
+        }
+        .image-upload-label {
+            cursor: pointer;
+            color: #3B82F6; /* blue-500 */
+            font-weight: 500; /* font-medium */
+            display: inline-block;
+            padding: 0.5rem 1rem; /* py-2 px-4 */
+            border: 1px solid #3B82F6; /* blue-500 */
+            border-radius: 0.25rem; /* rounded-md */
+            transition: background-color 0.2s;
+            margin-top: 0.5rem;
+        }
+        .image-upload-label:hover {
+            background-color: #eff6ff; /* blue-50 */
+        }
+        .image-upload-input {
+            display: none;
+        }
+        .paste-instruction {
+            color: #6b7280; /* gray-500 */
+            font-size: 0.875rem; /* text-sm */
+            display: block;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <header class="mb-8 text-center">
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800">2025 우성면 어린이 한마당 만족도 조사 (학생용)</h1>
+        <p class="text-lg text-gray-600 mt-2">결과 보고서</p>
+    </header>
+
+    <main id="report-content">
+        <!-- 보고서 내용이 여기에 동적으로 생성됩니다. -->
+    </main>
+
+    <script>
+        // --- 데이터 정의 ---
+        const reportData = {
+            "totalRespondents": 43,
+            "pieChartQuestions": [
+                {
+                    "id": "chart1",
+                    "questionText": "1. 이번 '우성면 어린이 한마당 운동회'는 전체적으로 즐겁고 신나는 경험이었나요?",
+                    "labels": ["매우 그렇다", "그렇다", "보통이다", "그렇지 않다", "전혀 그렇지 않다"],
+                    "data": [28, 11, 4, 0, 0],
+                    "totalResponses": 43
+                },
+                {
+                    "id": "chart2",
+                    "questionText": "2. 운동회에서 했던 다양한 게임이나 달리기 등의 활동 프로그램들은 흥미롭고 재미있었나요?",
+                    "labels": ["매우 그렇다", "그렇다", "보통이다", "그렇지 않다", "전혀 그렇지 않다"],
+                    "data": [26, 11, 4, 2, 0],
+                    "totalResponses": 43
+                },
+                {
+                    "id": "chart3",
+                    "questionText": "3. 올해는 우성초, 상서초, 귀산초 친구들과 함께 운동회를 했습니다. 여기에 대해 어떻게 생각하나요?",
+                    "labels": ["내년에도 3개교가 같이 했으면 좋겠다", "우리 학교만 했으면 좋겠다"],
+                    "data": [22, 21],
+                    "totalResponses": 43
+                },
+                {
+                    "id": "chart4", // Corresponds to survey question 5
+                    "questionText": "5. 운동회 장소(백제체육관)는 활동하기에 쾌적하고 편리했나요?",
+                    "labels": ["매우 그렇다", "그렇다", "보통이다", "그렇지 않다", "전혀 그렇지 않다"],
+                    "data": [31, 9, 3, 0, 0],
+                    "totalResponses": 43
+                },
+                {
+                    "id": "chart5", // Corresponds to survey question 6
+                    "questionText": "6. 운동회 점심시간에 먹었던 도시락은 맛있었나요?",
+                    "labels": ["매우 그렇다", "그렇다", "보통이다", "그렇지 않다", "전혀 그렇지 않다"],
+                    "data": [16, 16, 9, 2, 0],
+                    "totalResponses": 43
+                }
+            ],
+            "openEndedQuestions": [
+                {
+                    "id": "q4a",
+                    "originalQuestionNumber": 4,
+                    "questionText": "4-A. (3번 문항에서 '내년에도 3개교가 같이 했으면 좋겠다'고 답한 경우) 그렇게 생각하는 이유를 적어주세요.",
+                    "responses": [
+                        "인원이 많아서 풍성해서 좋다", "인원이 많아서 풍성해서 좋다", "친구들이 많아서 좋았어요!", "즐거워서요",
+                        "친구랑 하면 신나니까요", "3 학교가 있으면 더 재미있으니까", "다같이 하는게 더욱 더 흥미 진진 하니까",
+                        "사람도 많고 이런초등학교가 있으니까 흥미를 찾을 수 있다.", "사람이더 많기 때문이 다.",
+                        "그냥 재밌고 사람이 많아서 더 즐거우니까", "다같이 놀면 재밌기 때문에,", "친구들을 만나서 놀 수도 있다",
+                        "사람이 많아서 좋다", "다른 학교 친구와 새로운 친구를 만날 수 있어서", "사람이 더 많으니 더 신났던 것 같다",
+                        "여러학교랑해서 더 재밌었어", "다른 학교 친구들과 친해질 수 있는 기회가 있기 때문입니다.",
+                        "학생이 많은것이 좋기 때문입니다.", "우리만 있으면 심심하니까 좋아요"
+                    ]
+                },
+                {
+                    "id": "q4b",
+                    "originalQuestionNumber": 4,
+                    "questionText": "4-B. (3번 문항에서 '우리 학교만 했으면 좋겠다'고 답한 경우) 그렇게 생각하는 이유를 적어주세요.",
+                    "responses": [
+                        "이번엔 우리학교만 해보고싶다.", "예전에도 우리학교만 했으니까.",
+                        "아이들이 운동회 참여 기회가 너무적고 매끄럽지 못하였다.", "다른애는 답답하다",
+                        "이름도 모르고 별로 친하지도 않아서", "꼭 3개교가 같이 모여서 할 필요는 없으니까 (우리학교)만으로도 친화력을 올릴 수 있으니까",
+                        "사람이 많았지?", "너무 어색하기 때문이다.", "다른 학교에선 친한친구가있어서 피구랑 한번더 같이하고싶다",
+                        "우리학교만 했을 때가 더 재미있었던 거 같다.", "사람이 너무 많아 다치기 쉬워서", "친해질 수 있어서",
+                        "부모님들도 같이 하고싶어서", "너무 정신이 없다.", "3개교가 같이 하니까 엄청 복잡했다", "너무 복잡했다."
+                    ]
+                },
+                {
+                    "id": "q7",
+                    "originalQuestionNumber": 7,
+                    "questionText": "7. 이번 운동회에서 가장 재미있었거나 기억에 남는 활동은 무엇이었나요?",
+                    "responses": [
+                        "색깔판 뒤집기", "색깔판 뒤집기", "공놀이", "공놀이", "공놀이", "달리기", "달리기", "달리기", "달리기",
+                        "이어달리기!!!", "이어달리기", "이어달리기", "이어달리기", "이어달리기", "공굴리기", "공굴리기", "생각이 안나요!",
+                        "파도타기", "공던지기", "공던지기", "공던지기", "공던지기", "공던지기", "공 터지기",
+                        "렘덤플레이댄스", "렘덤플레이댄스", "랜덤플레이", "랜덤플레이", "랜덤플레이댄스", "랜덤플레이댄스", "랜덤플레이댄스",
+                        "계주 달리기", "줄넘기 위아래", "랜덤댄스", "계주", "계주", "계주", "계주", "계주", "계주",
+                        "랜덤플레이댄스, 계주", "없다"
+                    ]
+                },
+                {
+                    "id": "q8",
+                    "originalQuestionNumber": 8,
+                    "questionText": "8. '내년에는 이렇게 바뀌었으면 좋겠다' (예: 하고 싶은 게임, 쉬는 시간 등) 하는 점이 있다면 자유롭게 적어주세요.",
+                    "responses": [
+                         "", "", "", "", "", "", // Representing blanks/X
+                        "피구", "피구", "피구", "피구", "피구",
+                        "배드민턴",
+                        "프로그램의 개선 필요합니다. 이어달리기 (계주), 줄다리기 등. 부모참여 독려하여 근로자의 날로 하였는데 이번행사에서는 부모의 역할의 의미를 잘느끼지 못하였다. 시설좋은 대한 장소가 중요하지 않습니다. 다양한 활동으로 아이들이 운동회의 행복하고 즐거운 추억으로 기억되었으면 합니다.",
+                        "딱지치기, 제기 맞추기, 만들기", "열발 뛰기", "줄넘기가 하고싶어요", "줄다리기 징검다리",
+                        "하고싶은게임", "피구,축구등 이 있었으면 좋겠다.", "피구나. 줄다리기, 하면 좋겠다",
+                        "내년에는 줄다리기랑 박터트리기도 하고싶어요", "피구, 줄다리기, 달리기", "피구가 생기면 좋겠습니다",
+                        "댄스", "쉬는 시간을 더 길게 갖고, 하고 싶은 게임은 배드민턴, 넷볼, 피구, 축구", "*없음",
+                        "계주를 한바퀴로 하면 좋겠다", "피구, 축구, 배드민턴이 생기는게 좋을 것 같다", "계주 인원을 늘리고 싶다",
+                        "피구나 공던지기 게임을 했으면 좋겠다", "민속 놀이"
+                    ].filter(response => response && response.trim() !== "") // Filter out truly empty strings for cleaner display
+                }
+            ]
+        };
+
+        const chartColors = ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#6366F1', '#F97316', '#0EA5E9'];
+        const reportContentEl = document.getElementById('report-content');
+
+        Chart.register(ChartDataLabels);
+
+        function displayWordCloudImage(src, questionId) {
+            let previewImageEl = document.getElementById(`preview-${questionId}`);
+            const instructionTextEl = document.getElementById(`instruction-${questionId}`);
+            const uploadLabelEl = document.querySelector(`label[for='upload-${questionId}']`);
+            const interactionAreaEl = document.getElementById(`interaction-area-${questionId}`);
+
+            if (!previewImageEl || !instructionTextEl || !uploadLabelEl || !interactionAreaEl) {
+                console.error(`워드클라우드 영역의 DOM 요소를 찾을 수 없습니다: ${questionId}`);
+                return;
+            }
+
+            previewImageEl.src = src;
+            previewImageEl.style.display = 'block';
+            instructionTextEl.style.display = 'none';
+            uploadLabelEl.style.display = 'none';
+            
+            interactionAreaEl.style.cursor = 'pointer';
+            previewImageEl.title = "클릭하여 이미지 변경 또는 삭제";
+            
+            const newPreviewImageEl = previewImageEl.cloneNode(true);
+            previewImageEl.parentNode.replaceChild(newPreviewImageEl, previewImageEl);
+            
+            newPreviewImageEl.addEventListener('click', () => {
+                resetWordCloudArea(questionId);
+            });
+        }
+
+        function resetWordCloudArea(questionId) {
+            const previewImageEl = document.getElementById(`preview-${questionId}`);
+            const instructionTextEl = document.getElementById(`instruction-${questionId}`);
+            const uploadLabelEl = document.querySelector(`label[for='upload-${questionId}']`);
+            const interactionAreaEl = document.getElementById(`interaction-area-${questionId}`);
+            const uploadInputEl = document.getElementById(`upload-${questionId}`);
+
+            if (!previewImageEl || !instructionTextEl || !uploadLabelEl || !interactionAreaEl) {
+                console.error(`워드클라우드 영역의 DOM 요소를 찾을 수 없습니다: ${questionId}`);
+                return;
+            }
+
+            previewImageEl.src = "#";
+            previewImageEl.style.display = 'none';
+            previewImageEl.removeAttribute('title');
+            
+            instructionTextEl.style.display = 'block';
+            uploadLabelEl.style.display = 'inline-block'; 
+            
+            interactionAreaEl.style.cursor = 'default';
+
+            if (uploadInputEl) {
+                uploadInputEl.value = ''; 
+            }
+        }
+
+        function renderSummary() {
+            const summaryDiv = document.createElement('div');
+            summaryDiv.className = 'content-card text-center mb-10';
+            summaryDiv.innerHTML = `<p class="text-xl font-semibold text-gray-700">총 설문 참여 인원: ${reportData.totalRespondents}명</p>`;
+            reportContentEl.appendChild(summaryDiv);
+        }
+
+        function createPieChart(chartInfo) {
+            const chartSectionDiv = document.createElement('div');
+            chartSectionDiv.className = 'content-card';
+            chartSectionDiv.innerHTML = `
+                <h2 class="question-title">${chartInfo.questionText}</h2>
+                <p class="response-count">총 응답: ${chartInfo.totalResponses}명</p>
+                <div class="chart-container">
+                    <canvas id="${chartInfo.id}"></canvas>
+                </div>
+            `;
+            reportContentEl.appendChild(chartSectionDiv);
+
+            const ctx = document.getElementById(chartInfo.id).getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: chartInfo.labels,
+                    datasets: [{
+                        label: '응답 수',
+                        data: chartInfo.data,
+                        backgroundColor: chartColors.slice(0, chartInfo.data.length),
+                        borderColor: '#FFFFFF',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { font: { size: 12, family: 'Inter, sans-serif' }, padding: 15 }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => {
+                                    let label = context.label || '';
+                                    if (label) label += ': ';
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = total > 0 ? (context.parsed / total * 100).toFixed(1) + '%' : '0%';
+                                    return `${context.raw}명 (${percentage})`;
+                                }
+                            }
+                        },
+                        datalabels: {
+                            display: true,
+                            formatter: (value, context) => {
+                                const total = context.dataset.data.reduce((acc, dataVal) => acc + dataVal, 0);
+                                const percentage = total > 0 ? (value / total * 100).toFixed(1) + '%' : '0%';
+                                return value === 0 ? '' : `${value}명\n(${percentage})`;
+                            },
+                            color: '#fff',
+                            textAlign: 'center',
+                            font: { weight: 'bold', size: 10 },
+                            textStrokeColor: 'rgba(0,0,0,0.5)',
+                            textStrokeWidth: 1,
+                            anchor: 'center',
+                            align: 'center',
+                        }
+                    },
+                    cutout: '50%'
+                }
+            });
+        }
+
+        function renderOpenEndedQuestion(questionInfo) {
+            const questionId = questionInfo.id;
+            const questionSectionDiv = document.createElement('div');
+            questionSectionDiv.className = 'content-card';
+
+            let responsesHtml = '';
+            questionInfo.responses.forEach(response => {
+                if (response && response.trim() !== "") {
+                    responsesHtml += `<div class="response-card">${response}</div>`;
+                }
+            });
+             // Count valid responses for display
+            const validResponseCount = questionInfo.responses.filter(r => r && r.trim() !== "").length;
+
+
+            questionSectionDiv.innerHTML = `
+                <h2 class="question-title">${questionInfo.questionText}</h2>
+                <div id="interaction-area-${questionId}" class="wordcloud-interaction-area" tabindex="0">
+                    <img id="preview-${questionId}" src="#" alt="워드클라우드 미리보기" class="wordcloud-image-preview">
+                    <p id="instruction-${questionId}" class="paste-instruction">여기에 워드클라우드 이미지를 붙여넣거나(Ctrl+V) 아래 버튼으로 업로드하세요.</p>
+                    <label for="upload-${questionId}" class="image-upload-label">파일에서 이미지 선택</label>
+                    <input type="file" id="upload-${questionId}" class="image-upload-input" accept="image/*">
+                </div>
+                <h3 class="text-md font-medium text-gray-600 mt-4 mb-2">개별 응답 (${validResponseCount}개):</h3>
+                <div class="open-ended-response-grid">${responsesHtml}</div>
+            `;
+            reportContentEl.appendChild(questionSectionDiv);
+
+            const uploadInputEl = document.getElementById(`upload-${questionId}`);
+            const interactionAreaEl = document.getElementById(`interaction-area-${questionId}`);
+
+            if (uploadInputEl) {
+                uploadInputEl.addEventListener('change', (event) => {
+                    const file = event.target.files[0];
+                    if (file && file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => displayWordCloudImage(e.target.result, questionId);
+                        reader.readAsDataURL(file);
+                    } else {
+                        if (file) alert("이미지 파일만 업로드할 수 있습니다.");
+                        uploadInputEl.value = '';
+                    }
+                });
+            }
+
+            if (interactionAreaEl) {
+                interactionAreaEl.addEventListener('paste', (event) => {
+                    const currentPreviewImageEl = document.getElementById(`preview-${questionId}`);
+
+                    if (currentPreviewImageEl && currentPreviewImageEl.style.display === 'block') {
+                        if (confirm("이미 삽입된 이미지가 있습니다. 변경하시겠습니까?")) {
+                            resetWordCloudArea(questionId);
+                        } else {
+                            event.preventDefault();
+                            return;
+                        }
+                    }
+
+                    event.preventDefault();
+                    const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+                    let foundImage = false;
+                    for (const item of items) {
+                        if (item.type.indexOf('image') !== -1) {
+                            const blob = item.getAsFile();
+                            const reader = new FileReader();
+                            reader.onload = (e) => displayWordCloudImage(e.target.result, questionId);
+                            reader.readAsDataURL(blob);
+                            foundImage = true;
+                            break;
+                        }
+                    }
+                    if (!foundImage) {
+                        alert("클립보드에 붙여넣을 수 있는 이미지가 없습니다.");
+                    }
+                });
+            }
+        }
+
+        // --- 보고서 내용 생성 실행 ---
+        renderSummary();
+
+        reportData.pieChartQuestions.forEach(pieQuestion => {
+            createPieChart(pieQuestion);
+
+            if (pieQuestion.id === 'chart3') { // Q3 차트가 그려진 후 Q4a, Q4b를 그림
+                const q4aData = reportData.openEndedQuestions.find(q => q.id === 'q4a');
+                if (q4aData) renderOpenEndedQuestion(q4aData);
+
+                const q4bData = reportData.openEndedQuestions.find(q => q.id === 'q4b');
+                if (q4bData) renderOpenEndedQuestion(q4bData);
+            }
+        });
+
+        // Q4a, Q4b를 제외한 나머지 주관식 문항을 그림
+        reportData.openEndedQuestions.forEach(openQuestion => {
+            if (openQuestion.id !== 'q4a' && openQuestion.id !== 'q4b') {
+                renderOpenEndedQuestion(openQuestion);
+            }
+        });
+
+    </script>
+</body>
+</html>
