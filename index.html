@@ -98,7 +98,7 @@
             align-items: center;
             justify-content: center;
             background-color: #f9fafb; /* gray-50 */
-            cursor: default;
+            cursor: default; /* 기본 커서. 이미지가 삽입되면 pointer로 변경 */
         }
         .wordcloud-interaction-area:focus-within {
              border-color: #3B82F6; /* blue-500 */
@@ -112,13 +112,14 @@
             margin-top: 0.5rem;
             margin-bottom: 0.5rem;
             border: 1px solid #e5e7eb; /* gray-200 */
-            display: none;
+            display: none; /* 초기에는 숨김 */
+            /* 이미지가 표시될 때 클릭 가능하도록 스타일은 JS에서 cursor: pointer로 변경 */
         }
         .image-upload-label {
             cursor: pointer;
             color: #3B82F6; /* blue-500 */
             font-weight: 500; /* font-medium */
-            display: inline-block;
+            display: inline-block; /* JS에서 none으로 바뀔 수 있음 */
             padding: 0.5rem 1rem; /* py-2 px-4 */
             border: 1px solid #3B82F6; /* blue-500 */
             border-radius: 0.25rem; /* rounded-md */
@@ -134,13 +135,14 @@
         .paste-instruction {
             color: #6b7280; /* gray-500 */
             font-size: 0.875rem; /* text-sm */
+            display: block; /* JS에서 none으로 바뀔 수 있음 */
         }
     </style>
 </head>
 <body class="p-4 md:p-8">
     <header class="mb-8 text-center">
         <!-- [템플릿 수정] 헤더 제목을 일반적인 형태로 변경 -->
-        <h1 class="text-3xl md:text-4xl font-bold text-gray-800">[연도] [행사명] 만족도 조사 (샘플)</h1>
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800">[2024] [샘플 행사] 만족도 조사 (참가자용)</h1>
         <p class="text-lg text-gray-600 mt-2">샘플 결과 보고서</p>
     </header>
 
@@ -156,7 +158,7 @@
             "pieChartQuestions": [
                 { 
                     "id": "chart1", 
-                    "questionText": "1. 이번 '[행사명]'은 전체적으로 즐겁고 신나는 경험이었나요?", // 행사명 일반화
+                    "questionText": "1. 이번 '[샘플 행사]'는 전체적으로 즐겁고 신나는 경험이었나요?", // 행사명 일반화
                     "labels": ["매우 그렇다", "그렇다", "보통이다", "그렇지 않다"], // 보기 항목 예시
                     "data": [70, 35, 10, 5], // 응답자 수 분포를 임의로 설정 (총합 120)
                     "totalResponses": 120 // data 배열의 합계와 일치
@@ -170,21 +172,21 @@
                 },
                 { 
                     "id": "chart3", 
-                    "questionText": "3. 올해는 [A기관], [B기관], [C기관]과 함께 행사를 진행했습니다. 이에 대해 어떻게 생각하나요?", // 기관명 일반화
-                    "labels": ["내년에도 여러 기관이 함께 했으면 좋겠다", "우리 기관만 참여했으면 좋겠다", "잘 모르겠다"], // 보기 항목 예시
+                    "questionText": "3. 올해는 [A기관], [B단체], [C위원회]와 함께 행사를 진행했습니다. 이에 대해 어떻게 생각하나요?", // 기관명 일반화
+                    "labels": ["내년에도 여러 곳과 함께 했으면 좋겠다", "우리 기관(단체)만 참여했으면 좋겠다", "잘 모르겠다"], // 보기 항목 예시
                     "data": [80, 30, 10], // 응답자 수 분포를 임의로 설정 (총합 120)
                     "totalResponses": 120
                 },
                 { 
                     "id": "chart4", 
-                    "questionText": "5. 행사 장소(예: [지정된 체육관])는 활동하기에 쾌적하고 편리했나요?", // 장소명 일반화
+                    "questionText": "5. 행사 장소(예: [시민 체육관])는 활동하기에 쾌적하고 편리했나요?", // 장소명 일반화
                     "labels": ["매우 그렇다", "그렇다", "보통이다", "그렇지 않다"],
                     "data": [75, 30, 10, 5], // 응답자 수 분포를 임의로 설정 (총합 120)
                     "totalResponses": 120
                 },
                 { 
                     "id": "chart5", 
-                    "questionText": "6. 행사 중 제공된 식사(예: 도시락)는 만족스러웠나요?", // 식사 관련 질문 일반화
+                    "questionText": "6. 행사 중 제공된 식사(예: 간식 꾸러미)는 만족스러웠나요?", // 식사 관련 질문 일반화
                     "labels": ["매우 그렇다", "그렇다", "보통이다", "그렇지 않다", "전혀 그렇지 않다"],
                     "data": [50, 40, 20, 8, 2], // 응답자 수 분포를 임의로 설정 (총합 120)
                     "totalResponses": 120
@@ -194,7 +196,7 @@
                 { 
                     "id": "q4a", 
                     "originalQuestionNumber": 4, 
-                    "questionText": "4-A. (3번 문항에서 '여러 기관이 함께 했으면 좋겠다'고 답한 경우) 그렇게 생각하는 이유를 적어주세요.", // 질문 일반화
+                    "questionText": "4-A. (3번 문항에서 '여러 곳과 함께 했으면 좋겠다'고 답한 경우) 그렇게 생각하는 이유를 적어주세요.", // 질문 일반화
                     "responses": [ // 익명화된 샘플 답변
                         "다양한 사람들과 교류할 수 있어서 좋았습니다.",
                         "행사 규모가 커져서 더 다채로운 경험을 할 수 있었습니다.",
@@ -206,13 +208,13 @@
                 { 
                     "id": "q4b", 
                     "originalQuestionNumber": 4, 
-                    "questionText": "4-B. (3번 문항에서 '우리 기관만 참여했으면 좋겠다'고 답한 경우) 그렇게 생각하는 이유를 적어주세요.", // 질문 일반화
+                    "questionText": "4-B. (3번 문항에서 '우리 기관(단체)만 참여했으면 좋겠다'고 답한 경우) 그렇게 생각하는 이유를 적어주세요.", // 질문 일반화
                     "responses": [ // 익명화된 샘플 답변
                         "우리 기관의 특색을 살린 행사를 하고 싶습니다.",
                         "인원이 너무 많으면 집중도가 떨어지는 것 같습니다.",
                         "소규모로 진행할 때 더 친밀한 분위기가 형성될 수 있습니다.",
                         "다른 기관과 일정을 조율하는 것이 번거롭습니다.",
-                        "우리 기관의 아이들에게 더 많은 참여 기회를 주고 싶습니다."
+                        "우리 참가자들에게 더 많은 참여 기회를 주고 싶습니다."
                     ] 
                 },
                 { 
@@ -242,44 +244,94 @@
             ]
         };
 
-        // 차트에 사용될 색상 배열입니다. 필요에 따라 더 추가하거나 변경할 수 있습니다.
         const chartColors = ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#6366F1', '#F97316', '#0EA5E9'];
-        
-        // 보고서 내용이 삽입될 메인 컨텐츠 영역의 HTML 요소를 가져옵니다.
         const reportContentEl = document.getElementById('report-content');
 
-        // --- 초기화 및 플러그인 등록 ---
-        // Chart.js에서 데이터 레이블 플러그인을 사용하도록 등록합니다.
-        // 이 플러그인 덕분에 차트의 각 조각에 데이터 값(예: 백분율)을 표시할 수 있습니다.
         Chart.register(ChartDataLabels);
 
-        // --- 보고서 생성 함수 ---
-
         /**
-         * 보고서 상단에 총 설문 참여자 수를 표시하는 요약 정보를 생성합니다.
+         * 특정 워드클라우드 영역을 이미지 표시 상태로 변경하고, 업로드 UI를 숨깁니다.
+         * @param {string} src - 표시할 이미지의 데이터 URL
+         * @param {string} questionId - 해당 워드클라우드 영역의 질문 ID
          */
-        function renderSummary() {
-            // 새로운 div 요소를 만듭니다.
-            const summaryDiv = document.createElement('div');
-            // Tailwind CSS 클래스를 사용하여 스타일을 적용합니다.
-            summaryDiv.className = 'content-card text-center mb-10';
-            // reportData에서 총 응답자 수를 가져와 HTML 내용으로 설정합니다.
-            summaryDiv.innerHTML = `<p class="text-xl font-semibold text-gray-700">총 설문 참여 인원: ${reportData.totalRespondents}명</p>`;
-            // 생성된 요약 정보 div를 메인 컨텐츠 영역에 추가합니다.
-            reportContentEl.appendChild(summaryDiv);
+        function displayWordCloudImage(src, questionId) {
+            let previewImageEl = document.getElementById(`preview-${questionId}`);
+            const instructionTextEl = document.getElementById(`instruction-${questionId}`);
+            const uploadLabelEl = document.querySelector(`label[for='upload-${questionId}']`);
+            const interactionAreaEl = document.getElementById(`interaction-area-${questionId}`);
+
+            if (!previewImageEl || !instructionTextEl || !uploadLabelEl || !interactionAreaEl) {
+                console.error(`워드클라우드 영역의 DOM 요소를 찾을 수 없습니다: ${questionId}`);
+                return;
+            }
+
+            previewImageEl.src = src;
+            previewImageEl.style.display = 'block';
+            instructionTextEl.style.display = 'none';
+            uploadLabelEl.style.display = 'none';
+            
+            interactionAreaEl.style.cursor = 'pointer';
+            previewImageEl.title = "클릭하여 이미지 변경 또는 삭제";
+
+            // 이미지 클릭 시 초기 상태로 되돌리는 이벤트 리스너 추가 (중복 방지)
+            const newPreviewImageEl = previewImageEl.cloneNode(true);
+            previewImageEl.parentNode.replaceChild(newPreviewImageEl, previewImageEl);
+            previewImageEl = newPreviewImageEl; // 중요: 변수 참조 업데이트
+
+            previewImageEl.addEventListener('click', () => {
+                resetWordCloudArea(questionId);
+            }, { once: true }); // 한번만 실행되도록 설정하여, reset 후 다시 리스너가 붙는 것을 방지
+                                // 또는, resetWordCloudArea에서 명시적으로 리스너를 제거할 수도 있습니다.
+                                // 여기서는 once: true로 간단히 처리. 더 복잡한 시나리오에서는 명시적 제거가 나을 수 있습니다.
+                                // 수정: once:true는 이 경우 부적합. reset 후 다시 등록해야 하기 때문.
+                                // cloneNode 방식으로 이미 리스너는 제거되므로, 아래와 같이 다시 등록.
+            
+            // cloneNode로 리스너가 제거되었으므로, 새 노드에 다시 리스너를 붙여야 합니다.
+            newPreviewImageEl.addEventListener('click', () => {
+                resetWordCloudArea(questionId);
+            });
         }
 
         /**
-         * 원형 차트(Doughnut Chart)를 생성하고 화면에 표시합니다.
-         * @param {object} chartInfo - 차트 생성에 필요한 정보 (id, 질문 텍스트, 레이블, 데이터 등)
+         * 특정 워드클라우드 영역을 초기 상태(이미지 업로드 대기)로 되돌립니다.
+         * @param {string} questionId - 해당 워드클라우드 영역의 질문 ID
          */
-        function createPieChart(chartInfo) {
-            // 차트를 감싸는 섹션 div 요소를 만듭니다.
-            const chartSectionDiv = document.createElement('div');
-            chartSectionDiv.className = 'content-card'; // 스타일 적용
+        function resetWordCloudArea(questionId) {
+            const previewImageEl = document.getElementById(`preview-${questionId}`);
+            const instructionTextEl = document.getElementById(`instruction-${questionId}`);
+            const uploadLabelEl = document.querySelector(`label[for='upload-${questionId}']`);
+            const interactionAreaEl = document.getElementById(`interaction-area-${questionId}`);
+            const uploadInputEl = document.getElementById(`upload-${questionId}`);
 
-            // 섹션 내부에 들어갈 HTML 구조를 정의합니다.
-            // 질문 제목, 총 응답 수, 그리고 차트가 그려질 <canvas> 요소를 포함합니다.
+            if (!previewImageEl || !instructionTextEl || !uploadLabelEl || !interactionAreaEl) {
+                console.error(`워드클라우드 영역의 DOM 요소를 찾을 수 없습니다: ${questionId}`);
+                return;
+            }
+
+            previewImageEl.src = "#";
+            previewImageEl.style.display = 'none';
+            previewImageEl.removeAttribute('title');
+            
+            instructionTextEl.style.display = 'block';
+            uploadLabelEl.style.display = 'inline-block'; 
+            
+            interactionAreaEl.style.cursor = 'default';
+
+            if (uploadInputEl) {
+                uploadInputEl.value = ''; 
+            }
+        }
+
+        function renderSummary() {
+            const summaryDiv = document.createElement('div');
+            summaryDiv.className = 'content-card text-center mb-10';
+            summaryDiv.innerHTML = `<p class="text-xl font-semibold text-gray-700">총 설문 참여 인원: ${reportData.totalRespondents}명</p>`;
+            reportContentEl.appendChild(summaryDiv);
+        }
+
+        function createPieChart(chartInfo) {
+            const chartSectionDiv = document.createElement('div');
+            chartSectionDiv.className = 'content-card';
             chartSectionDiv.innerHTML = `
                 <h2 class="question-title">${chartInfo.questionText}</h2>
                 <p class="response-count">총 응답: ${chartInfo.totalResponses}명</p>
@@ -287,180 +339,154 @@
                     <canvas id="${chartInfo.id}"></canvas>
                 </div>
             `;
-            // 생성된 차트 섹션을 메인 컨텐츠 영역에 추가합니다.
             reportContentEl.appendChild(chartSectionDiv);
 
-            // <canvas> 요소의 2D 렌더링 컨텍스트를 가져옵니다. 여기에 차트가 그려집니다.
             const ctx = document.getElementById(chartInfo.id).getContext('2d');
-            
-            // Chart.js를 사용하여 새 차트 객체를 생성합니다.
             new Chart(ctx, {
-                type: 'doughnut', // 차트 종류는 '도넛'
+                type: 'doughnut',
                 data: {
-                    labels: chartInfo.labels, // 각 조각의 이름 (예: "매우 그렇다")
+                    labels: chartInfo.labels,
                     datasets: [{
-                        label: '응답 수', // 데이터셋의 레이블
-                        data: chartInfo.data, // 실제 응답 수 데이터 배열
-                        backgroundColor: chartColors.slice(0, chartInfo.data.length), // 각 조각의 배경색
-                        borderColor: '#FFFFFF', // 각 조각의 테두리 색
-                        borderWidth: 2 // 테두리 두께
+                        label: '응답 수',
+                        data: chartInfo.data,
+                        backgroundColor: chartColors.slice(0, chartInfo.data.length),
+                        borderColor: '#FFFFFF',
+                        borderWidth: 2
                     }]
                 },
                 options: {
-                    responsive: true, // 차트가 컨테이너 크기에 맞춰 자동으로 조절되도록 설정
-                    maintainAspectRatio: false, // 컨테이너 비율에 종속되지 않고, 지정된 높이/너비 사용
+                    responsive: true,
+                    maintainAspectRatio: false,
                     plugins: {
-                        legend: { // 범례 설정
-                            position: 'bottom', // 범례 위치 (아래쪽)
-                            labels: { 
-                                font: { size: 12, family: 'Inter, sans-serif' }, // 범례 폰트
-                                padding: 15 // 범례와 차트 사이 간격
-                            }
+                        legend: {
+                            position: 'bottom',
+                            labels: { font: { size: 12, family: 'Inter, sans-serif' }, padding: 15 }
                         },
-                        tooltip: { // 마우스 오버 시 나타나는 툴팁 설정
+                        tooltip: {
                             callbacks: {
-                                label: (context) => { // 툴팁 내용 커스터마이징
+                                label: (context) => {
                                     let label = context.label || '';
                                     if (label) label += ': ';
                                     const total = context.dataset.data.reduce((a, b) => a + b, 0);
                                     const percentage = total > 0 ? (context.parsed / total * 100).toFixed(1) + '%' : '0%';
-                                    // 예: "매우 그렇다: 70명 (58.3%)"
                                     return `${context.raw}명 (${percentage})`;
                                 }
                             }
                         },
-                        datalabels: { // 차트 위에 표시될 데이터 레이블 설정 (chartjs-plugin-datalabels)
-                            display: true, // 레이블 표시 여부
-                            formatter: (value, context) => { // 레이블 형식 커스터마이징
+                        datalabels: {
+                            display: true,
+                            formatter: (value, context) => {
                                 const total = context.dataset.data.reduce((acc, dataVal) => acc + dataVal, 0);
                                 const percentage = total > 0 ? (value / total * 100).toFixed(1) + '%' : '0%';
-                                // 값이 0이면 표시하지 않음, 아니면 "N명\n(P%)" 형식으로 표시
                                 return value === 0 ? '' : `${value}명\n(${percentage})`;
                             },
-                            color: '#fff', // 레이블 텍스트 색상 (흰색)
-                            textAlign: 'center', // 텍스트 정렬 (가운데)
-                            font: { weight: 'bold', size: 10 }, // 레이블 폰트
-                            textStrokeColor: 'rgba(0,0,0,0.5)', // 텍스트 외곽선 색 (가독성 향상)
-                            textStrokeWidth: 1, // 텍스트 외곽선 두께
-                            anchor: 'center', // 레이블 위치 기준점 (조각의 중앙)
-                            align: 'center', // 레이블 정렬 (조각의 중앙)
+                            color: '#fff',
+                            textAlign: 'center',
+                            font: { weight: 'bold', size: 10 },
+                            textStrokeColor: 'rgba(0,0,0,0.5)',
+                            textStrokeWidth: 1,
+                            anchor: 'center',
+                            align: 'center',
                         }
                     },
-                    cutout: '50%' // 도넛 차트의 가운데 빈 공간 크기 (50%면 반지름의 절반)
+                    cutout: '50%'
                 }
             });
         }
 
-        /**
-         * 주관식 질문과 답변, 그리고 워드클라우드 이미지 업로드/붙여넣기 영역을 생성합니다.
-         * @param {object} questionInfo - 주관식 질문 정보 (id, 질문 텍스트, 답변 목록 등)
-         */
         function renderOpenEndedQuestion(questionInfo) {
-            const questionId = questionInfo.id; // 질문의 고유 ID
-            // 주관식 질문 섹션을 위한 div 요소를 만듭니다.
+            const questionId = questionInfo.id;
             const questionSectionDiv = document.createElement('div');
-            questionSectionDiv.className = 'content-card'; // 스타일 적용
+            questionSectionDiv.className = 'content-card';
 
-            let responsesHtml = ''; // 주관식 답변들을 HTML 문자열로 만듭니다.
+            let responsesHtml = '';
             questionInfo.responses.forEach(response => {
-                // 답변 내용이 비어있지 않은 경우에만 카드를 생성합니다.
                 if (response && response.trim() !== "") {
-                    // 각 답변을 response-card 스타일을 가진 div로 만듭니다.
                     responsesHtml += `<div class="response-card">${response}</div>`;
                 }
             });
 
-            // 주관식 질문 섹션의 전체 HTML 구조를 정의합니다.
-            // 질문 제목, 워드클라우드 이미지 인터랙션 영역, 개별 응답 목록 제목, 그리고 응답 그리드를 포함합니다.
             questionSectionDiv.innerHTML = `
                 <h2 class="question-title">${questionInfo.questionText}</h2>
-                <!-- 워드클라우드 이미지 업로드/붙여넣기 영역 -->
                 <div id="interaction-area-${questionId}" class="wordcloud-interaction-area" tabindex="0">
                     <img id="preview-${questionId}" src="#" alt="워드클라우드 미리보기" class="wordcloud-image-preview">
                     <p id="instruction-${questionId}" class="paste-instruction">여기에 워드클라우드 이미지를 붙여넣거나(Ctrl+V) 아래 버튼으로 업로드하세요.</p>
                     <label for="upload-${questionId}" class="image-upload-label">파일에서 이미지 선택</label>
                     <input type="file" id="upload-${questionId}" class="image-upload-input" accept="image/*">
                 </div>
-                <!-- 개별 응답 목록 -->
                 <h3 class="text-md font-medium text-gray-600 mt-4 mb-2">개별 응답 (${questionInfo.responses.length}개):</h3>
                 <div class="open-ended-response-grid">${responsesHtml}</div> 
             `;
-            // 생성된 주관식 질문 섹션을 메인 컨텐츠 영역에 추가합니다.
             reportContentEl.appendChild(questionSectionDiv);
 
-            // 워드클라우드 관련 DOM 요소들을 가져옵니다.
-            const interactionAreaEl = document.getElementById(`interaction-area-${questionId}`);
             const uploadInputEl = document.getElementById(`upload-${questionId}`);
-            const previewImageEl = document.getElementById(`preview-${questionId}`);
-            const instructionTextEl = document.getElementById(`instruction-${questionId}`);
+            const interactionAreaEl = document.getElementById(`interaction-area-${questionId}`);
 
-            /**
-             * 이미지를 미리보기 영역에 표시하는 함수입니다.
-             * @param {string} src - 이미지 데이터 URL (Base64 인코딩된 이미지)
-             */
-            const displayImage = (src) => {
-                previewImageEl.src = src;
-                previewImageEl.style.display = 'block'; // 이미지 요소를 보이게 함
-                instructionTextEl.style.display = 'none'; // 안내 문구는 숨김
-            };
-
-            /**
-             * 미리보기 이미지를 숨기고 초기 상태로 되돌리는 함수입니다.
-             */
-            const hideImage = () => {
-                previewImageEl.src = "#"; // 이미지 소스 초기화
-                previewImageEl.style.display = 'none'; // 이미지 요소 숨김
-                instructionTextEl.style.display = 'block'; // 안내 문구 다시 보이게 함
-            };
-
-            // 파일 업로드 input 요소에 이벤트 리스너를 추가합니다.
             if (uploadInputEl) {
                 uploadInputEl.addEventListener('change', (event) => {
-                    const file = event.target.files[0]; // 선택된 파일 가져오기
-                    if (file && file.type.startsWith('image/')) { // 파일이 존재하고 이미지 파일인 경우
-                        const reader = new FileReader(); // 파일을 읽기 위한 FileReader 객체 생성
-                        reader.onload = (e) => displayImage(e.target.result); // 파일 읽기가 완료되면 이미지 표시
-                        reader.readAsDataURL(file); // 파일을 Data URL로 읽기 (Base64 인코딩)
+                    const file = event.target.files[0];
+                    if (file && file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => displayWordCloudImage(e.target.result, questionId);
+                        reader.readAsDataURL(file);
                     } else {
-                        hideImage(); // 이미지 파일이 아니거나 파일이 없으면 미리보기 숨김
-                        if (file) alert("이미지 파일만 업로드할 수 있습니다."); // 사용자에게 알림
+                        // 사용자가 파일 선택을 취소했거나 이미지 파일이 아닌 경우,
+                        // 이미지가 표시된 상태였다면 리셋하지 않고, 초기 상태였다면 그대로 둡니다.
+                        // resetWordCloudArea(questionId); // 이 부분은 상황에 따라 조절. 여기서는 제거.
+                        if (file) alert("이미지 파일만 업로드할 수 있습니다.");
+                        uploadInputEl.value = ''; // 같은 파일 다시 선택 가능하도록 초기화
                     }
                 });
             }
 
-            // 워드클라우드 인터랙션 영역에 'paste' (붙여넣기) 이벤트 리스너를 추가합니다.
             if (interactionAreaEl) {
                 interactionAreaEl.addEventListener('paste', (event) => {
-                    event.preventDefault(); // 기본 붙여넣기 동작 방지
-                    // 클립보드 데이터를 가져옵니다.
+                    const currentPreviewImageEl = document.getElementById(`preview-${questionId}`);
+                    
+                    if (currentPreviewImageEl && currentPreviewImageEl.style.display === 'block') {
+                        if (confirm("이미 삽입된 이미지가 있습니다. 변경하시겠습니까?")) {
+                            // resetWordCloudArea(questionId)는 displayWordCloudImage 내부의 click 리스너에서 호출됨.
+                            // 여기서는 직접 reset을 호출하기보다, 사용자가 이미지를 클릭하여 직접 리셋하도록 유도하거나,
+                            // 아니면 강제로 리셋 후 붙여넣기를 진행할 수 있습니다.
+                            // 현재 로직은 사용자가 이미지를 클릭하여 리셋하는 것을 전제로 합니다.
+                            // 만약 붙여넣기 시 즉시 변경을 원한다면 여기서 resetWordCloudArea(questionId);를 호출하고
+                            // 아래 로직을 이어가면 됩니다.
+                            // 하지만 이 경우, displayWordCloudImage 내부의 리스너 로직과 꼬일 수 있으므로 주의.
+                            // 가장 간단한 방법은, 사용자가 이미지를 클릭해서 직접 비우고 다시 붙여넣도록 안내하는 것입니다.
+                            // 여기서는, 확인 시 바로 이미지를 교체하도록 reset을 호출합니다.
+                            resetWordCloudArea(questionId); // 확인 시 즉시 리셋
+                        } else {
+                            event.preventDefault(); 
+                            return;
+                        }
+                    }
+                    
+                    event.preventDefault(); 
                     const items = (event.clipboardData || event.originalEvent.clipboardData).items;
                     let foundImage = false;
                     for (const item of items) {
-                        if (item.type.indexOf('image') !== -1) { // 클립보드 아이템이 이미지인 경우
-                            const blob = item.getAsFile(); // 이미지 파일을 Blob 객체로 가져옴
+                        if (item.type.indexOf('image') !== -1) {
+                            const blob = item.getAsFile();
                             const reader = new FileReader();
-                            reader.onload = (e) => displayImage(e.target.result); // 파일 읽기 완료 시 이미지 표시
-                            reader.readAsDataURL(blob); // Blob을 Data URL로 읽기
+                            reader.onload = (e) => displayWordCloudImage(e.target.result, questionId);
+                            reader.readAsDataURL(blob);
                             foundImage = true;
-                            break; // 첫 번째 이미지만 처리
+                            break;
                         }
                     }
-                    if (!foundImage) alert("클립보드에 붙여넣을 수 있는 이미지가 없습니다."); // 이미지가 없으면 알림
+                    if (!foundImage) {
+                        alert("클립보드에 붙여넣을 수 있는 이미지가 없습니다.");
+                    }
                 });
             }
         }
 
         // --- 보고서 내용 생성 실행 ---
-        // 1. 전체 요약 정보(총 응답자 수)를 먼저 화면에 표시합니다.
         renderSummary();
 
-        // 2. 객관식 질문(원형 차트)들을 순회하며 화면에 표시합니다.
         reportData.pieChartQuestions.forEach(pieQuestion => {
-            createPieChart(pieQuestion); // 각 객관식 질문에 대한 차트 생성
+            createPieChart(pieQuestion);
 
-            // 특정 객관식 질문(예: chart3, 여러 기관 참여 여부)과 연관된 주관식 질문이 있다면 함께 표시합니다.
-            // 이 부분은 데이터 구조에 따라 유동적으로 조절할 수 있습니다.
-            // 여기서는 chart3 (ID) 다음에 q4a, q4b 주관식 질문이 오는 로직을 유지했습니다.
             if (pieQuestion.id === 'chart3') {
                 const q4aData = reportData.openEndedQuestions.find(q => q.id === 'q4a');
                 if (q4aData) renderOpenEndedQuestion(q4aData);
@@ -470,8 +496,6 @@
             }
         });
 
-        // 3. 나머지 주관식 질문들을 순회하며 화면에 표시합니다.
-        // (이미 chart3과 연관되어 표시된 q4a, q4b는 제외합니다.)
         reportData.openEndedQuestions.forEach(openQuestion => {
             if (openQuestion.id !== 'q4a' && openQuestion.id !== 'q4b') {
                 renderOpenEndedQuestion(openQuestion);
