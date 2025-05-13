@@ -360,7 +360,27 @@
                     plugins: {
                         legend: {
                             position: 'bottom',
-                            labels: { font: { size: 12, family: 'Inter, sans-serif' }, padding: 15 }
+                            labels: { 
+                                font: { size: 12, family: 'Inter, sans-serif' }, 
+                                padding: 15,
+                                generateLabels: function(chart) {
+                                    const data = chart.data;
+                                    if (data.labels.length && data.datasets.length) {
+                                        const total = data.datasets[0].data.reduce((acc, val) => acc + val, 0);
+                                        return data.labels.map((label, i) => {
+                                            const value = data.datasets[0].data[i];
+                                            const percentage = total > 0 ? (value / total * 100).toFixed(1) + '%' : '0%';
+                                            return {
+                                                text: `${label}: ${value}명 (${percentage})`,
+                                                fillStyle: data.datasets[0].backgroundColor[i],
+                                                hidden: isNaN(data.datasets[0].data[i]) || chart.getDatasetMeta(0).data[i].hidden,
+                                                index: i
+                                            };
+                                        });
+                                    }
+                                    return [];
+                                }
+                            }
                         },
                         tooltip: {
                             callbacks: {
