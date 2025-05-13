@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 우성면 어린이 한마당 만족도 조사 결과 보고서 (교사용)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif; /* 한글 폰트 추가 */
+            background-color: #f3f4f6; /* Tailwind gray-100 */
+        }
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 350px;
+            width: 100%;
+            max-width: 450px;
+        }
+        @media (min-width: 640px) { /* sm breakpoint */
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .content-card {
+            background-color: white;
+            border-radius: 0.5rem; /* rounded-lg */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+            padding: 1.5rem; /* p-6 */
+            margin-bottom: 2rem; /* mb-8 */
+        }
+        .question-title {
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 600; /* font-semibold */
+            margin-bottom: 0.25rem; /* mb-1 */
+            color: #374151; /* text-gray-700 */
+        }
+        .response-count {
+            font-size: 0.875rem; /* text-sm */
+            color: #6b7280; /* text-gray-500 */
+            margin-bottom: 1rem; /* mb-4 */
+        }
+        /* 주관식 응답 그리드 스타일 */
+        .open-ended-response-grid {
+            margin-top: 0.5rem; /* mt-2 */
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* 최소 200px, 공간따라 자동 열 개수 */
+            gap: 0.5rem; /* gap-2, 카드 간 간격 */
+            padding: 0.25rem; /* p-1, 리스트 내부 패딩 */
+            max-height: 20rem; /* h-80, 최대 높이. 필요시 조절 */
+            overflow-y: auto;   /* 내용이 최대 높이를 넘을 경우 세로 스크롤 */
+            border: 1px solid #e5e7eb; /* gray-200, 리스트 전체 테두리 */
+            border-radius: 0.25rem; /* rounded-md */
+        }
+        .response-card { /* 각 응답 카드 스타일 */
+            font-size: 0.875rem;  /* text-sm, 폰트 크기 약간 키움 */
+            color: #4b5563;     /* gray-600, 텍스트 색상 */
+            background-color: #f9fafb; /* gray-50, 배경색 */
+            border: 1px solid #f3f4f6; /* gray-100, 카드 테두리 */
+            border-radius: 0.25rem; /* rounded-md */
+            padding: 0.75rem; /* p-3, 카드 내부 패딩 약간 늘림 */
+            word-break: break-word; /* 긴 단어 줄바꿈 */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* 아주 옅은 그림자 */
+            min-height: 50px; /* 카드의 최소 높이 약간 늘림 */
+            display: flex;
+            align-items: flex-start; /* 내용을 위에서부터 채움 */
+            text-align: left;
+        }
+        /* 스크롤바 스타일링 (선택 사항, Webkit 브라우저용) */
+        .open-ended-response-grid::-webkit-scrollbar {
+            width: 8px;
+        }
+        .open-ended-response-grid::-webkit-scrollbar-track {
+            background: #f3f4f6; /* body 배경색과 유사하게 */
+            border-radius: 4px;
+        }
+        .open-ended-response-grid::-webkit-scrollbar-thumb {
+            background: #d1d5db; /* gray-300 */
+            border-radius: 4px;
+        }
+        .open-ended-response-grid::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af; /* gray-400 */
+        }
+
+        .wordcloud-interaction-area {
+            margin-top: 1rem;
+            padding: 1rem;
+            border: 2px dashed #cbd5e1; /* gray-300 */
+            border-radius: 0.375rem; /* rounded-md */
+            text-align: center;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f9fafb; /* gray-50 */
+            cursor: default; /* 기본 커서. 이미지가 삽입되면 pointer로 변경 */
+        }
+        .wordcloud-interaction-area:focus-within {
+            border-color: #3B82F6; /* blue-500 */
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
+        }
+        .wordcloud-image-preview {
+            max-width: 100%;
+            max-height: 300px;
+            height: auto;
+            border-radius: 0.25rem; /* rounded-md */
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid #e5e7eb; /* gray-200 */
+            display: none; /* 초기에는 숨김 */
+        }
+        .image-upload-label {
+            cursor: pointer;
+            color: #3B82F6; /* blue-500 */
+            font-weight: 500; /* font-medium */
+            display: inline-block;
+            padding: 0.5rem 1rem; /* py-2 px-4 */
+            border: 1px solid #3B82F6; /* blue-500 */
+            border-radius: 0.25rem; /* rounded-md */
+            transition: background-color 0.2s;
+            margin-top: 0.5rem;
+        }
+        .image-upload-label:hover {
+            background-color: #eff6ff; /* blue-50 */
+        }
+        .image-upload-input {
+            display: none;
+        }
+        .paste-instruction {
+            color: #6b7280; /* gray-500 */
+            font-size: 0.875rem; /* text-sm */
+            display: block;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <header class="mb-8 text-center">
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800">2025 우성면 어린이 한마당 만족도 조사 (교사용)</h1>
+        <p class="text-lg text-gray-600 mt-2">결과 보고서</p>
+    </header>
+
+<main id="report-content">
+    <!-- 보고서 내용이 여기에 동적으로 생성됩니다. -->
+</main>
+
+<script>
+    // --- 데이터 정의 ---
+    // 2025 우성면 어린이 한마당 만족도 조사 (교사용) 실제 데이터
+    const reportData = {
+        "totalRespondents": 13, // 총 응답자 수
+        "pieChartQuestions": [
+            {
+                "id": "chartQ1",
+                "questionText": "1. 이번 운동회는 학생들의 공동체 의식 함양, 협동심 증진, 즐거운 학교 문화 조성 등 교육적 목표 달성에 효과적이었습니까?",
+                "labels": ["매우 그렇다", "그렇다", "보통이다", "그렇지 않다"],
+                "data": [5, 4, 3, 1],
+                "totalResponses": 13
+            },
+            {
+                "id": "chartQ2",
+                "questionText": "2. 운동회 프로그램의 구성(종목 다양성, 학년 수준 적합성 등)과 레크리에이션 업체의 진행 방식은 전반적으로 만족스러웠습니까?",
+                "labels": ["매우 그렇다", "그렇다", "보통이다", "전혀 그렇지 않다"],
+                "data": [5, 1, 6, 1],
+                "totalResponses": 13
+            },
+            {
+                "id": "chartQ3",
+                "questionText": "3. 행사 준비 과정에서의 사전 협의(학교 간, 부서 간), 업무 분담 및 역할 배정은 명확하고 효율적으로 이루어졌습니까?",
+                "labels": ["매우 그렇다", "그렇다", "그렇지 않다"],
+                "data": [6, 6, 1],
+                "totalResponses": 13
+            },
+            {
+                "id": "chartQ4",
+                "questionText": "4. 행사 예산(도시락, 운영 물품 등)의 편성과 집행은 적절했으며, 필요한 물품(경기 용품, 구급약품 등)은 충분히 확보되었습니까?",
+                "labels": ["매우 그렇다", "그렇다", "그렇지 않다"],
+                "data": [8, 4, 1],
+                "totalResponses": 13
+            },
+            {
+                "id": "chartQ5",
+                "questionText": "5. 행사 당일 학생 인솔 및 생활 지도, 안전 관리(안전 교육 포함), 돌발 상황 대처 시스템은 효과적으로 운영되었습니까?",
+                "labels": ["매우 그렇다", "그렇다", "보통이다"],
+                "data": [10, 2, 1],
+                "totalResponses": 13
+            },
+            {
+                "id": "chartQ6",
+                "questionText": "6. 타 학교 및 주관 기관(주민자치회, 레크리에이션 업체 등)과의 의사소통 및 업무 협조는 원활하게 이루어졌습니까?",
+                "labels": ["매우 그렇다", "그렇다", "보통이다"],
+                "data": [5, 5, 3],
+                "totalResponses": 13
+            },
+            {
+                "id": "chartQ7_JointEvent", // 템플릿의 chart3 역할과 유사하게 사용될 ID
+                "questionText": "7. 올해는 우성초, 상서초, 귀산초 친구들과 함께 운동회를 했습니다. 여기에 대해 어떻게 생각하나요?",
+                "labels": ["우리 학교만 했으면 좋겠다", "내년에도 3개교가 같이 했으면 좋겠다"],
+                "data": [10, 3],
+                "totalResponses": 13
+            }
+        ],
+        "openEndedQuestions": [
+            {
+                "id": "oeQ8_ReasonForSingle", // 7번 문항에서 "우리 학교만" 선택 시 이유
+                "originalQuestionNumber": 8,
+                "questionText": "8-A. (7번 문항에서 '우리 학교만 했으면 좋겠다'고 답한 경우) 그 이유는 무엇인가요?",
+                "responses": [
+                    "학생이 많은데 비해서 참여학생 수가 적고 붕 뜨는 구간이 많았다.",
+                    "3개 학교가 모였기때문에 안전사고에 대해 면밀하게 살펴보기 힘들었습니다. 각 학교에서 실시하면 학생 참여 기회가 더 많을 것입니다.",
+                    "우리 학교 아이들이 주인공이 되었으면 좋겠습니다.",
+                    "1. 3개교가 같은 공간에만 있을 뿐 각 학생들은 자신의 학교 학생들과만 활동했음.\n2. 오히려 참여 인원이 많아지면서 작년보다 참여가능한 게임의 수가 줄어듦.\n3. 그럼에도 내년에 또 한다면 3개교 학생이 섞일 수 있게끔 프로그램을 짜야한다고 생각함. (예: 우성1명-상서1명-귀산1명 원팀이 되어 참여하는 게임)",
+                    "우리 아이들이 주체가 되는 행사였으면 합니다",
+                    "체육대회가 단위학교별 교육공동체의 소통 및 화합의 장으로 활용되길 바람",
+                    "프로그램 구성이 아쉬웠다.",
+                    "점심전에 끝나면 좋겠습니다",
+                    "격년으로 연합, 단독으로 하면 좋겠다",
+                    "처음 취지에 비해, 준비 과정이 지나치게 복잡하고 그것에 비해 어떤 결과물을 얻어냈는지 모르겠습니다."
+                ]
+            },
+            {
+                "id": "oeQ8_ReasonForJoint", // 7번 문항에서 "3개교 같이" 선택 시 이유
+                "originalQuestionNumber": 8,
+                "questionText": "8-B. (7번 문항에서 '내년에도 3개교가 같이 했으면 좋겠다'고 답한 경우) 그 이유는 무엇인가요?",
+                "responses": [
+                    "충분한 학생 수가 확보됨",
+                    "소규모 학교의 단점을 보완하는 방안 중 하나인 것 같아서"
+                ]
+            },
+            {
+                "id": "oeQ9_DifficultiesSuggestions",
+                "originalQuestionNumber": 9,
+                "questionText": "9. 이번 운동회에서 가장 큰 어려움은 무엇이었으며, 바람직한 실시 방식에 대한 선생님의 의견이나 프로그램에 대한 구체적인 아이디어가 있다면 함께 제안해 주시기 바랍니다.",
+                "responses": [
+                    "내년에는 더욱 내실있게 열렸으면 좋겠다.",
+                    "가장 큰 어려움은 진행 시간이 길었습니다. 오전 활동 후 점심은 각자 학교가서 먹게 오전만 운영했으면 합니다. 시작 시 내빈 소개 및 인사를 아주 짧게 진행하면 오전시간동안 효율적인 진행이 가능할것입니다.",
+                    "학생들 간의 교류를 촉진할 수 있는 게임도 있으면 좋겠음. 식사 순서나 자리가 좀 더 체계적으로 안내되면 좋을 것 같음.",
+                    "없음",
+                    "학교 자체 행사가 더 나을듯 합니다",
+                    "학부모 참여기회 배제로 지루함을 주었음",
+                    "1. 3개교 연합체육대회가 성공하려면 한 개의 학교가 중심이 되어 진행하면 훨씬 더 효과가 좋을 것이다.\n2. 선생님들도 괜히 불편하고 주체성을 띠지 못해 준비 과정에 대한 불안함, 행사 당일날 프로그램의 재미, 효과 모두 실패했다고 생각한다.\n3. 이렇게 되면 본교만의 체육대회를 진행해야 될텐데...교사의 짊이 많아질것이다. 그렇다면 체육대회와 예술제를 격년제로 진행해 보면 어떨까 싶다."
+                ]
+            }
+        ]
+    };
+
+    const chartColors = ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#6366F1', '#F97316', '#0EA5E9'];
+    const reportContentEl = document.getElementById('report-content');
+
+    Chart.register(ChartDataLabels); // Chart.js 데이터 레이블 플러그인 등록
+
+    /**
+     * 특정 워드클라우드 영역을 이미지 표시 상태로 변경하고, 업로드 UI를 숨깁니다.
+     * @param {string} src - 표시할 이미지의 데이터 URL
+     * @param {string} questionId - 해당 워드클라우드 영역의 질문 ID
+     */
+    function displayWordCloudImage(src, questionId) {
+        let previewImageEl = document.getElementById(`preview-${questionId}`);
+        const instructionTextEl = document.getElementById(`instruction-${questionId}`);
+        const uploadLabelEl = document.querySelector(`label[for='upload-${questionId}']`);
+        const interactionAreaEl = document.getElementById(`interaction-area-${questionId}`);
+
+        if (!previewImageEl || !instructionTextEl || !uploadLabelEl || !interactionAreaEl) {
+            console.error(`워드클라우드 영역의 DOM 요소를 찾을 수 없습니다: ${questionId}`);
+            return;
+        }
+
+        previewImageEl.src = src;
+        previewImageEl.style.display = 'block';
+        instructionTextEl.style.display = 'none';
+        uploadLabelEl.style.display = 'none';
+        
+        interactionAreaEl.style.cursor = 'pointer'; // 이미지 클릭으로 리셋 가능하도록 커서 변경
+        previewImageEl.title = "클릭하여 이미지 변경 또는 삭제";
+
+        // 이미지 클릭 시 초기 상태로 되돌리는 이벤트 리스너 추가 (기존 리스너 제거 후 새로 추가)
+        const newPreviewImageEl = previewImageEl.cloneNode(true); // 리스너 제거를 위해 노드 복제
+        previewImageEl.parentNode.replaceChild(newPreviewImageEl, previewImageEl);
+        previewImageEl = newPreviewImageEl; // 변수 참조 업데이트
+
+        previewImageEl.addEventListener('click', () => {
+            resetWordCloudArea(questionId);
+        });
+    }
+
+    /**
+     * 특정 워드클라우드 영역을 초기 상태(이미지 업로드 대기)로 되돌립니다.
+     * @param {string} questionId - 해당 워드클라우드 영역의 질문 ID
+     */
+    function resetWordCloudArea(questionId) {
+        const previewImageEl = document.getElementById(`preview-${questionId}`);
+        const instructionTextEl = document.getElementById(`instruction-${questionId}`);
+        const uploadLabelEl = document.querySelector(`label[for='upload-${questionId}']`);
+        const interactionAreaEl = document.getElementById(`interaction-area-${questionId}`);
+        const uploadInputEl = document.getElementById(`upload-${questionId}`);
+
+        if (!previewImageEl || !instructionTextEl || !uploadLabelEl || !interactionAreaEl) {
+            console.error(`워드클라우드 영역의 DOM 요소를 찾을 수 없습니다: ${questionId}`);
+            return;
+        }
+
+        previewImageEl.src = "#"; // 이미지 소스 초기화
+        previewImageEl.style.display = 'none'; // 이미지 숨김
+        previewImageEl.removeAttribute('title'); // 툴팁 제거
+        
+        instructionTextEl.style.display = 'block'; // 안내 문구 표시
+        uploadLabelEl.style.display = 'inline-block'; // 업로드 버튼 표시
+        
+        interactionAreaEl.style.cursor = 'default'; // 기본 커서로 변경
+
+        if (uploadInputEl) {
+            uploadInputEl.value = ''; // 파일 입력 값 초기화 (같은 파일 재선택 가능하도록)
+        }
+    }
+
+    /**
+     * 보고서 상단에 총 응답자 수를 표시합니다.
+     */
+    function renderSummary() {
+        const summaryDiv = document.createElement('div');
+        summaryDiv.className = 'content-card text-center mb-10';
+        summaryDiv.innerHTML = `<p class="text-xl font-semibold text-gray-700">총 설문 참여 인원: ${reportData.totalRespondents}명</p>`;
+        reportContentEl.appendChild(summaryDiv);
+    }
+
+    /**
+     * 객관식 문항에 대한 파이 차트를 생성하고 DOM에 추가합니다.
+     * @param {object} chartInfo - 차트 정보를 담은 객체
+     */
+    function createPieChart(chartInfo) {
+        const chartSectionDiv = document.createElement('div');
+        chartSectionDiv.className = 'content-card';
+        chartSectionDiv.innerHTML = `
+            <h2 class="question-title">${chartInfo.questionText}</h2>
+            <p class="response-count">총 응답: ${chartInfo.totalResponses}명</p>
+            <div class="chart-container">
+                <canvas id="${chartInfo.id}"></canvas>
+            </div>
+        `;
+        reportContentEl.appendChild(chartSectionDiv);
+
+        const ctx = document.getElementById(chartInfo.id).getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut', // 도넛 차트 사용
+            data: {
+                labels: chartInfo.labels,
+                datasets: [{
+                    label: '응답 수',
+                    data: chartInfo.data,
+                    backgroundColor: chartColors.slice(0, chartInfo.data.length), // 미리 정의된 색상 사용
+                    borderColor: '#FFFFFF', // 구분선 색상
+                    borderWidth: 2 // 구분선 두께
+                }]
+            },
+            options: {
+                responsive: true, // 반응형 크기 조절
+                maintainAspectRatio: false, // 컨테이너 크기에 맞춤
+                plugins: {
+                    legend: { // 범례 설정
+                        position: 'bottom', // 범례 위치
+                        labels: { 
+                            font: { size: 12, family: 'Inter, Noto Sans KR, sans-serif' }, // 범례 폰트
+                            padding: 15, // 범례 간격
+                            generateLabels: function(chart) { // 범례 텍스트 커스터마이징 (응답 수, 비율 표시)
+                                const data = chart.data;
+                                if (data.labels.length && data.datasets.length) {
+                                    const total = data.datasets[0].data.reduce((acc, val) => acc + val, 0);
+                                    return data.labels.map((label, i) => {
+                                        const value = data.datasets[0].data[i];
+                                        const percentage = total > 0 ? (value / total * 100).toFixed(1) + '%' : '0%';
+                                        return {
+                                            text: `${label}: ${value}명 (${percentage})`,
+                                            fillStyle: data.datasets[0].backgroundColor[i],
+                                            hidden: isNaN(data.datasets[0].data[i]) || chart.getDatasetMeta(0).data[i].hidden,
+                                            index: i
+                                        };
+                                    });
+                                }
+                                return [];
+                            }
+                        }
+                    },
+                    tooltip: { // 툴팁 설정
+                        callbacks: {
+                            label: (context) => { // 툴팁 내용 커스터마이징 (응답 수, 비율 표시)
+                                let label = context.label || '';
+                                if (label) label += ': ';
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = total > 0 ? (context.parsed / total * 100).toFixed(1) + '%' : '0%';
+                                return `${context.raw}명 (${percentage})`;
+                            }
+                        }
+                    },
+                    datalabels: { // 데이터 레이블 플러그인 설정
+                        display: true, // 레이블 표시
+                        formatter: (value, context) => { // 레이블 내용 커스터마이징 (응답 수, 비율 표시)
+                            const total = context.dataset.data.reduce((acc, dataVal) => acc + dataVal, 0);
+                            const percentage = total > 0 ? (value / total * 100).toFixed(1) + '%' : '0%';
+                            // 값이 0이면 레이블 숨김 (차트가 지저분해지는 것 방지)
+                            return value === 0 ? '' : `${value}명\n(${percentage})`;
+                        },
+                        color: '#fff', // 레이블 글자색
+                        textAlign: 'center', // 텍스트 정렬
+                        font: { weight: 'bold', size: 10 }, // 레이블 폰트
+                        textStrokeColor: 'rgba(0,0,0,0.5)', // 텍스트 테두리 색 (가독성 향상)
+                        textStrokeWidth: 1, // 텍스트 테두리 두께
+                        anchor: 'center', // 레이블 위치 기준점
+                        align: 'center', // 레이블 정렬
+                    }
+                },
+                cutout: '50%' // 도넛 차트의 가운데 빈 공간 크기
+            }
+        });
+    }
+
+    /**
+     * 주관식 문항과 응답을 렌더링하고 DOM에 추가합니다.
+     * @param {object} questionInfo - 주관식 문항 정보를 담은 객체
+     */
+    function renderOpenEndedQuestion(questionInfo) {
+        const questionId = questionInfo.id;
+        const questionSectionDiv = document.createElement('div');
+        questionSectionDiv.className = 'content-card';
+
+        let responsesHtml = '';
+        questionInfo.responses.forEach(response => {
+            // 응답 내용이 비어있지 않은 경우에만 카드 생성
+            if (response && response.trim() !== "") {
+                // XSS 방지를 위해 텍스트를 HTML 엔티티로 변환 (간단한 방식)
+                const sanitizedResponse = response.replace(/</g, "<").replace(/>/g, ">");
+                responsesHtml += `<div class="response-card">${sanitizedResponse}</div>`;
+            }
+        });
+        // 응답이 하나도 없는 경우 표시할 메시지
+        if (responsesHtml === "") {
+            responsesHtml = `<p class="text-sm text-gray-500 italic p-2">해당 질문에 대한 답변이 없습니다.</p>`;
+        }
+
+
+        questionSectionDiv.innerHTML = `
+            <h2 class="question-title">${questionInfo.questionText}</h2>
+            <!-- 워드클라우드 이미지 삽입 영역 -->
+            <div id="interaction-area-${questionId}" class="wordcloud-interaction-area" tabindex="0">
+                <img id="preview-${questionId}" src="#" alt="워드클라우드 미리보기" class="wordcloud-image-preview">
+                <p id="instruction-${questionId}" class="paste-instruction">여기에 워드클라우드 이미지를 붙여넣거나(Ctrl+V) 아래 버튼으로 업로드하세요.</p>
+                <label for="upload-${questionId}" class="image-upload-label">파일에서 이미지 선택</label>
+                <input type="file" id="upload-${questionId}" class="image-upload-input" accept="image/*">
+            </div>
+            <h3 class="text-md font-medium text-gray-600 mt-4 mb-2">개별 응답 (${questionInfo.responses.filter(r => r && r.trim() !== "").length}개):</h3>
+            <div class="open-ended-response-grid">${responsesHtml}</div> 
+        `;
+        reportContentEl.appendChild(questionSectionDiv);
+
+        const uploadInputEl = document.getElementById(`upload-${questionId}`);
+        const interactionAreaEl = document.getElementById(`interaction-area-${questionId}`);
+
+        // 파일 업로드 이벤트 리스너
+        if (uploadInputEl) {
+            uploadInputEl.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file && file.type.startsWith('image/')) { // 이미지 파일인지 확인
+                    const reader = new FileReader();
+                    reader.onload = (e) => displayWordCloudImage(e.target.result, questionId);
+                    reader.readAsDataURL(file); // 파일을 데이터 URL로 읽기
+                } else {
+                    if (file) alert("이미지 파일만 업로드할 수 있습니다.");
+                    uploadInputEl.value = ''; // 잘못된 파일 선택 시 입력 초기화
+                }
+            });
+        }
+
+        // 이미지 붙여넣기 이벤트 리스너
+        if (interactionAreaEl) {
+            interactionAreaEl.addEventListener('paste', (event) => {
+                const currentPreviewImageEl = document.getElementById(`preview-${questionId}`);
+                
+                // 이미 이미지가 삽입된 경우 사용자에게 교체 여부 확인
+                if (currentPreviewImageEl && currentPreviewImageEl.style.display === 'block') {
+                    if (confirm("이미 삽입된 이미지가 있습니다. 변경하시겠습니까?")) {
+                        resetWordCloudArea(questionId); // 기존 이미지 리셋
+                    } else {
+                        event.preventDefault(); // 붙여넣기 취소
+                        return;
+                    }
+                }
+                
+                event.preventDefault(); // 기본 붙여넣기 동작 방지
+                const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+                let foundImage = false;
+                for (const item of items) {
+                    if (item.type.indexOf('image') !== -1) { // 클립보드 아이템이 이미지인 경우
+                        const blob = item.getAsFile();
+                        const reader = new FileReader();
+                        reader.onload = (e) => displayWordCloudImage(e.target.result, questionId);
+                        reader.readAsDataURL(blob); // Blob 객체를 데이터 URL로 읽기
+                        foundImage = true;
+                        break;
+                    }
+                }
+                if (!foundImage) {
+                    alert("클립보드에 붙여넣을 수 있는 이미지가 없습니다.");
+                }
+            });
+        }
+    }
+
+    // --- 보고서 내용 생성 실행 ---
+    renderSummary(); // 총 응답자 수 표시
+
+    // 객관식 문항 차트 생성 및 특정 문항(7번) 이후 연관 주관식 문항(8번) 렌더링
+    reportData.pieChartQuestions.forEach(pieQuestion => {
+        createPieChart(pieQuestion);
+
+        // 7번 문항(ID: chartQ7_JointEvent) 차트 렌더링 후, 관련된 8번 문항의 이유들을 렌더링
+        if (pieQuestion.id === 'chartQ7_JointEvent') {
+            // "내년에도 3개교가 같이 했으면 좋겠다"고 답한 경우의 이유
+            const reasonForJointData = reportData.openEndedQuestions.find(q => q.id === 'oeQ8_ReasonForJoint');
+            if (reasonForJointData) renderOpenEndedQuestion(reasonForJointData);
+
+            // "우리 학교만 했으면 좋겠다"고 답한 경우의 이유
+            const reasonForSingleData = reportData.openEndedQuestions.find(q => q.id === 'oeQ8_ReasonForSingle');
+            if (reasonForSingleData) renderOpenEndedQuestion(reasonForSingleData);
+        }
+    });
+
+    // 나머지 주관식 문항(9번) 렌더링
+    reportData.openEndedQuestions.forEach(openQuestion => {
+        // 이미 7번 문항과 함께 렌더링된 8번 문항의 이유들은 제외
+        if (openQuestion.id !== 'oeQ8_ReasonForJoint' && openQuestion.id !== 'oeQ8_ReasonForSingle') {
+            renderOpenEndedQuestion(openQuestion);
+        }
+    });
+
+</script>
+</body>
+</html>
