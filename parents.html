@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
             background-color: #f3f4f6; /* Tailwind gray-100 */
         }
         .chart-container {
@@ -50,20 +50,21 @@
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* 최소 200px, 공간따라 자동 열 개수 */
             gap: 0.75rem; /* gap-3, 카드 간 간격 */
             padding: 0.5rem; /* p-2, 리스트 내부 패딩 */
-            max-height: 25rem; /* h-96, 최대 높이. 필요시 조절 */
+            max-height: 25rem; /* h-100, 최대 높이. 필요시 조절 */
             overflow-y: auto;   /* 내용이 최대 높이를 넘을 경우 세로 스크롤 */
             border: 1px solid #e5e7eb; /* gray-200, 리스트 전체 테두리 */
             border-radius: 0.375rem; /* rounded-md */
+            background-color: #f9fafb; /* gray-50 */
         }
         .response-card { /* 각 응답 카드 스타일 */
             font-size: 0.875rem;  /* text-sm, 폰트 크기 */
             color: #374151;     /* gray-700, 텍스트 색상 */
-            background-color: #f9fafb; /* gray-50, 배경색 */
+            background-color: #ffffff; /* white, 배경색 */
             border: 1px solid #e5e7eb; /* gray-200, 카드 테두리 */
             border-radius: 0.375rem; /* rounded-md */
             padding: 0.75rem; /* p-3, 카드 내부 패딩 */
             word-break: break-word; /* 긴 단어 줄바꿈 */
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); /* 옅은 그림자 */
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); /* shadow-sm */
             min-height: 50px; /* 카드의 최소 높이 */
             display: flex; 
             align-items: flex-start; /* 내용을 위에서부터 채움 */
@@ -71,20 +72,19 @@
         }
         /* 스크롤바 스타일링 (선택 사항, Webkit 브라우저용) */
         .open-ended-response-grid::-webkit-scrollbar {
-            width: 8px;
+            width: 10px;
         }
         .open-ended-response-grid::-webkit-scrollbar-track {
             background: #f3f4f6; /* body 배경색과 유사하게 */
-            border-radius: 4px;
+            border-radius: 5px;
         }
         .open-ended-response-grid::-webkit-scrollbar-thumb {
             background: #d1d5db; /* gray-300 */
-            border-radius: 4px;
+            border-radius: 5px;
         }
         .open-ended-response-grid::-webkit-scrollbar-thumb:hover {
             background: #9ca3af; /* gray-400 */
         }
-
         .wordcloud-interaction-area {
             margin-top: 1rem;
             padding: 1rem;
@@ -97,11 +97,11 @@
             align-items: center;
             justify-content: center;
             background-color: #f9fafb; /* gray-50 */
-            cursor: default; /* 기본 커서. 이미지가 삽입되면 pointer로 변경 */
+            cursor: default;
         }
         .wordcloud-interaction-area:focus-within {
-             border-color: #3B82F6; /* blue-500 */
-             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
+            border-color: #3B82F6; /* blue-500 */
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
         }
         .wordcloud-image-preview {
             max-width: 100%;
@@ -111,13 +111,13 @@
             margin-top: 0.5rem;
             margin-bottom: 0.5rem;
             border: 1px solid #e5e7eb; /* gray-200 */
-            display: none; /* 초기에는 숨김 */
+            display: none;
         }
         .image-upload-label {
             cursor: pointer;
             color: #3B82F6; /* blue-500 */
             font-weight: 500; /* font-medium */
-            display: inline-block; 
+            display: inline-block;
             padding: 0.5rem 1rem; /* py-2 px-4 */
             border: 1px solid #3B82F6; /* blue-500 */
             border-radius: 0.25rem; /* rounded-md */
@@ -131,15 +131,15 @@
             display: none;
         }
         .paste-instruction {
-            color: #6b7280; /* gray-500 */
+            color: #6b7280; /* text-gray-500 */
             font-size: 0.875rem; /* text-sm */
-            display: block; 
+            display: block;
         }
     </style>
 </head>
 <body class="p-4 md:p-8">
     <header class="mb-8 text-center">
-        <h1 class="text-3xl md:text-4xl font-bold text-gray-800">2025 우성면 어린이 한마당 운동회 만족도 조사 (학부모용)</h1>
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800">2025 우성면 어린이 한마당 만족도 조사 (학부모용)</h1>
         <p class="text-lg text-gray-600 mt-2">결과 보고서</p>
     </header>
 
@@ -147,305 +147,316 @@
         <!-- 보고서 내용이 여기에 동적으로 생성됩니다. -->
     </main>
 
-    <script>
-        // --- 데이터 정의 ---
-        const reportData = {
-            "totalRespondents": 10, 
-            "pieChartQuestions": [
-                { 
-                    "id": "chartQ1", 
-                    "questionText": "1. 자녀가 이번 '어린이 한마당 운동회'를 통해 즐거움과 만족감을 느꼈다고 생각하십니까?",
-                    "labels": ["매우 그렇다", "그렇다", "보통이다", "그렇지 않다", "전혀 그렇지 않다"],
-                    "data": [3, 5, 0, 2, 0], 
-                    "totalResponses": 10
-                },
-                { 
-                    "id": "chartQ2", 
-                    "questionText": "2. 운동회 프로그램(종목, 진행 방식 등)은 학생들이 즐겁게 참여하고 화합하는 데 적절했다고 생각하십니까?",
-                    "labels": ["매우 그렇다", "그렇다", "보통이다", "그렇지 않다", "전혀 그렇지 않다"],
-                    "data": [3, 3, 3, 1, 0], 
-                    "totalResponses": 10
-                },
-                { 
-                    "id": "chartQ3", 
-                    "questionText": "3. 점심으로 제공된 식사의 질과 양은 만족스러웠습니까?",
-                    "labels": ["매우 만족", "다소 만족", "보통", "별로 만족하지 못함", "전혀 만족하지 못함"],
-                    "data": [3, 4, 3, 0, 0], 
-                    "totalResponses": 10
-                },
-                { 
-                    "id": "chartQ4", 
-                    "questionText": "4. 행사 당일 참여자(학생, 학부모 포함)의 안전을 위한 전반적인 운영 및 관리는 적절했다고 느끼셨습니까?",
-                    "labels": ["매우 그렇다", "그렇다", "보통이다", "그렇지 않다", "전혀 그렇지 않다"],
-                    "data": [3, 4, 1, 1, 1],
-                    "totalResponses": 10
-                },
-                { 
-                    "id": "chartQ5", 
-                    "questionText": "5. 행사장(백제체육관)의 시설 환경(청결, 편의성 등)과 참여자를 위한 공간(휴식 공간 등)은 적절했다고 생각하십니까?",
-                    "labels": ["매우 그렇다", "그렇다", "보통이다", "그렇지 않다", "전혀 그렇지 않다"],
-                    "data": [3, 2, 4, 0, 1],
-                    "totalResponses": 10
-                },
-                { 
-                    "id": "chartQ6", 
-                    "questionText": "6. 행사 참여를 위한 이동(자가/버스 안내) 및 귀가 과정은 비교적 원활하고 안전하게 이루어졌다고 생각하십니까?",
-                    "labels": ["매우 그렇다", "그렇다", "보통이다", "그렇지 않다", "전혀 그렇지 않다"],
-                    "data": [5, 3, 1, 1, 0],
-                    "totalResponses": 10
-                },
-                { 
-                    "id": "chartQ7", 
-                    "questionText": "7. 올해는 우성초, 상서초, 귀산초 친구들과 함께 운동회를 했습니다. 여기에 대해 어떻게 생각하십니까?",
-                    "labels": ["내년에도 3개교가 같이 했으면 좋겠다", "우리 학교만 했으면 좋겠다"],
-                    "data": [6, 4],
-                    "totalResponses": 10
-                }
-            ],
-            "openEndedQuestions": [
-                { 
-                    "id": "q8_open", 
-                    "originalQuestionNumber": 8, 
-                    "questionText": "8. 이번 운동회에 참여하시면서 경험하신 점 중, 좋았던 점이나 아쉬웠던 점, 또는 개선이 필요하다고 생각되는 부분(프로그램, 안전, 편의 시설, 행사 운영 등)에 대하여 적어 주세요.",
-                    "responses": [
-                        "이어달리기가 좋았다.",
-                        "다양한 상품으로 아이들이 더 신나게 참여할 수 있도록 동기부여가 필요한거 같아요.",
-                        "프로그램이 다소 아쉬운 점이 많았다 (너무 영아기준의 프로그램의 방식이다.) 아이들이 운동회 참여의 기회가 너무 적고 진행이 매끄럽지 못하였다. 부모 참여라 하여 일부러 근로자의 날을 선택하신거 같은데 관중석에만 있고 운동복을 입고온 의미가 없었다.",
-                        "만족합니다.",
-                        "단체경기가 더 많았으면..",
-                        "참여한게 없어서 많이 서운하네요."
-                    ].filter(response => response && response.trim() !== "")
-                },
-                { 
-                    "id": "q9_open", 
-                    "originalQuestionNumber": 9, 
-                    "questionText": "9. 내년 어린이 한마당 운동회가 다시 열린다면, 기대하거나 바라는 점(개최 방식, 프로그램, 운영 개선 등)에 대하여 적어 주세요.",
-                    "responses": [
-                        "우성초만 하면 좋겠다",
-                        "다양한 프로그램이 이루어지면 좋겠습니다.",
-                        "프로그램개선 (청백줄다리기, 계주, 박터트리기 등 참여 기회가 많았으면 좋겠습니다.) 선생님들의 적극적인 행사 참여가 필요로 보여집니다. 시설 좋은 대관의 장소가 중요하지 않습니다. 아이들이 운동회하는 행복하고 즐거운 추억으로 남을 수 있는 날로 기억되었으면 합니다.",
-                        "다음 경기 시작전 대기시 아이들 지루해 보임. 응원이나 함께 할수있게 하면 좋을 듯.",
-                        "학부모 참여 운동회가 됐으면 좋겠습니다."
-                    ].filter(response => response && response.trim() !== "")
-                }
-            ]
-        };
-
-        const chartColors = ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#6366F1', '#F97316', '#0EA5E9'];
-        const reportContentEl = document.getElementById('report-content');
-
-        Chart.register(ChartDataLabels);
-
-        function displayWordCloudImage(src, questionId) {
-            let previewImageEl = document.getElementById(`preview-${questionId}`);
-            const instructionTextEl = document.getElementById(`instruction-${questionId}`);
-            const uploadLabelEl = document.querySelector(`label[for='upload-${questionId}']`);
-            const interactionAreaEl = document.getElementById(`interaction-area-${questionId}`);
-
-            if (!previewImageEl || !instructionTextEl || !uploadLabelEl || !interactionAreaEl) {
-                console.error(`워드클라우드 영역의 DOM 요소를 찾을 수 없습니다: ${questionId}`);
-                return;
+<script>
+    // --- 데이터 정의 ---
+    const reportData = {
+        "totalRespondents": 21,
+        "pieChartQuestions": [
+            { 
+                "id": "chartQ1", 
+                "questionText": "1. 자녀가 이번 '어린이 한마당 운동회'를 통해 즐거움과 만족감을 느꼈다고 생각하십니까?",
+                "labels": ["매우 그렇다", "그렇다", "보통이다", "그렇지 않다", "전혀 그렇지 않다"],
+                "data": [10, 6, 2, 2, 1],
+                "totalResponses": 21
+            },
+            { 
+                "id": "chartQ2", 
+                "questionText": "2. 운동회 프로그램(종목, 진행 방식 등)은 학생들이 즐겁게 참여하고 화합하는 데 적절했다고 생각하십니까?",
+                "labels": ["매우 그렇다", "그렇다", "보통이다", "그렇지 않다", "전혀 그렇지 않다"],
+                "data": [9, 4, 5, 3, 0],
+                "totalResponses": 21
+            },
+            { 
+                "id": "chartQ3", 
+                "questionText": "3. 점심으로 제공된 식사의 질과 양은 만족스러웠습니까?",
+                "labels": ["매우 만족", "다소 만족", "보통", "별로 만족하지 못함", "전혀 만족하지 못함"],
+                "data": [8, 10, 3, 0, 0],
+                "totalResponses": 21
+            },
+            { 
+                "id": "chartQ4", 
+                "questionText": "4. 행사 당일 참여자(학생, 학부모 포함)의 안전을 위한 전반적인 운영 및 관리는 적절했다고 느끼셨습니까?",
+                "labels": ["매우 그렇다", "그렇다", "보통이다", "그렇지 않다", "전혀 그렇지 않다"],
+                "data": [14, 5, 1, 1, 0],
+                "totalResponses": 21
+            },
+            { 
+                "id": "chartQ5", 
+                "questionText": "5. 행사장(백제체육관)의 시설 환경(청결, 편의성 등)과 참여자를 위한 공간(휴식 공간 등)은 적절했다고 생각하십니까?",
+                "labels": ["매우 그렇다", "그렇다", "보통이다", "그렇지 않다", "전혀 그렇지 않다"],
+                "data": [13, 5, 2, 1, 0],
+                "totalResponses": 21
+            },
+            { 
+                "id": "chartQ6", 
+                "questionText": "6. 행사 참여를 위한 이동(자가/버스 안내) 및 귀가 과정은 비교적 원활하고 안전하게 이루어졌다고 생각하십니까?",
+                "labels": ["매우 그렇다", "그렇다", "보통이다", "그렇지 않다", "전혀 그렇지 않다"],
+                "data": [14, 6, 1, 0, 0],
+                "totalResponses": 21
+            },
+            { 
+                "id": "chartQ7", 
+                "questionText": "7. 올해는 우성초, 상서초, 귀산초 친구들과 함께 운동회를 했습니다. 여기에 대해 어떻게 생각하십니까?",
+                "labels": ["내년에도 3개교가 같이 했으면 좋겠다", "우리 학교만 했으면 좋겠다"],
+                "data": [10, 11],
+                "totalResponses": 21
             }
+        ],
+        "openEndedQuestions": [
+            { 
+                "id": "openQ8", 
+                "originalQuestionNumber": 8, 
+                "questionText": "8. 이번 운동회에 참여하시면서 경험하신 점 중, 좋았던 점이나 아쉬웠던 점, 또는 개선이 필요하다고 생각되는 부분(프로그램, 안전, 편의 시설, 행사 운영 등)에 대하여 적어 주세요.",
+                "responses": [
+                    "프로그램이 다소 아쉬운 점이 많았다 (너무 영아 기준의 프로그램 방식이다.) 아이들이 운동회 참여의 기회가 너무 적고 진행이 매끄럽지 못하였다. 부모 참여라 하여 일부러 근로자의 날을 선택하신 것 같은데 관중석에만 있고 운동복을 입고 온 의미가 없었다.",
+                    "만족합니다.",
+                    "단체경기가 더 많았으면..",
+                    "참여한 게 없어서 많이 서운하네요.",
+                    "이어달리기가 좋았다.",
+                    "다양한 상품으로 아이들이 더 신나게 참여할 수 있도록 동기부여가 필요한 것 같아요.",
+                    "비가 와서 어쩔 수 없는 부분이 있었지만 식구 다 같이 모여 점심을 못 먹은 부분이 아쉬웠다. 각 팀 점수 매겨서 이기고 하는 방식이 아니어서 좋았다.",
+                    "좋은 점은 학생들이 많아서 좋았고 아쉬운 점은 같이 참여 프로그램이 없어서 아쉽고 가족적인 분위기에서 우성초만 학교에서 했으면 하는 생각.",
+                    "부모님도 같이 할 수 있었으면 더 좋았을 것 같다.",
+                    "좋았던 점 - 부모 참여한 점. 아쉬웠던 점 - 점심 도시락이 좋았을 듯. 뷔페는 정신이 없음.",
+                    "부모님과 같이 할 수 있는 프로그램이 없어서 아쉬웠다.",
+                    "부모 참여 없음에 아쉬움이 남습니다. 아이들과 근접한 거리에서 관람하고 응원하고 함께 하고 싶습니다. 실내였고 비가 와서 추운데 아이들이 반팔을 입고 경기해서 염려되었습니다. 도시락이 부득이 취소되어 아쉬웠습니다. 주민자치분들께서 고생하신 것 같습니다.",
+                    "없다"
+                ] 
+            },
+            { 
+                "id": "openQ9", 
+                "originalQuestionNumber": 9, 
+                "questionText": "9. 내년 어린이 한마당 운동회가 다시 열린다면, 기대하거나 바라는 점(개최 방식, 프로그램, 운영 개선 등)에 대하여 적어 주세요.",
+                "responses": [
+                    "프로그램 개선 (청백 줄다리기, 계주, 발야구 등 참여 기회가 많았으면 좋겠습니다.) 선생님들의 적극적인 행사 참여가 필요로 보여집니다. 시설 좋은 대관의 장소가 중요하지 않습니다. 아이들이 운동회라는 행복하고 즐거운 추억으로 남을 수 있는 날로 기억되었으면 합니다.",
+                    "다음 경기 시작 전 대기 시 아이들 지루해 보임. 응원이나 함께 할 수 있게 하면 좋을 듯.",
+                    "학부모 참여 운동회가 됐으면 좋겠습니다.",
+                    "우성초만 하면 좋겠다.",
+                    "다양한 프로그램이 이루어지면 좋겠습니다.",
+                    "우성초에서 했으면 좋겠어요.",
+                    "부모님도 함께 할 수 있는 프로그램도 넣어주세요.",
+                    "학교별로 경기를 했으면 좋겠습니다. 과열되는 분위기여도 한번씩은 학교 대 학교로~",
+                    "다음에는 부모님과 같이 할 수 있게 해주세요.",
+                    "부모와 함께 할 수 있는 종목 추가해 주세요. ex) 줄넘기. 날씨 또는 기온에 맞춰서 의상 준비하고 운동장 또는 체육관에서 하면 좋겠습니다. 학생 수가 적어도 부모님과 선생님들과 같이 협력할 수 있는 게임이 있었으면 합니다.",
+                    "없다"
+                ]
+            }
+        ]
+    };
 
-            previewImageEl.src = src;
-            previewImageEl.style.display = 'block';
-            instructionTextEl.style.display = 'none';
-            uploadLabelEl.style.display = 'none';
-            
-            interactionAreaEl.style.cursor = 'pointer';
-            previewImageEl.title = "클릭하여 이미지 변경 또는 삭제";
-            
-            const newPreviewImageEl = previewImageEl.cloneNode(true);
-            previewImageEl.parentNode.replaceChild(newPreviewImageEl, previewImageEl);
-            
-            newPreviewImageEl.addEventListener('click', () => {
-                resetWordCloudArea(questionId);
-            });
+    const chartColors = ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#6366F1', '#F97316', '#0EA5E9'];
+    const reportContentEl = document.getElementById('report-content');
+
+    Chart.register(ChartDataLabels);
+
+    function displayWordCloudImage(src, questionId) {
+        let previewImageEl = document.getElementById(`preview-${questionId}`);
+        const instructionTextEl = document.getElementById(`instruction-${questionId}`);
+        const uploadLabelEl = document.querySelector(`label[for='upload-${questionId}']`);
+        const interactionAreaEl = document.getElementById(`interaction-area-${questionId}`);
+
+        if (!previewImageEl || !instructionTextEl || !uploadLabelEl || !interactionAreaEl) {
+            console.error(`워드클라우드 영역의 DOM 요소를 찾을 수 없습니다: ${questionId}`);
+            return;
         }
 
-        function resetWordCloudArea(questionId) {
-            const previewImageEl = document.getElementById(`preview-${questionId}`);
-            const instructionTextEl = document.getElementById(`instruction-${questionId}`);
-            const uploadLabelEl = document.querySelector(`label[for='upload-${questionId}']`);
-            const interactionAreaEl = document.getElementById(`interaction-area-${questionId}`);
-            const uploadInputEl = document.getElementById(`upload-${questionId}`);
+        previewImageEl.src = src;
+        previewImageEl.style.display = 'block';
+        instructionTextEl.style.display = 'none';
+        uploadLabelEl.style.display = 'none';
+        
+        interactionAreaEl.style.cursor = 'pointer';
+        previewImageEl.title = "클릭하여 이미지 변경 또는 삭제";
+        
+        const newPreviewImageEl = previewImageEl.cloneNode(true);
+        previewImageEl.parentNode.replaceChild(newPreviewImageEl, previewImageEl);
+        
+        newPreviewImageEl.addEventListener('click', () => {
+            resetWordCloudArea(questionId);
+        });
+    }
 
-            if (!previewImageEl || !instructionTextEl || !uploadLabelEl || !interactionAreaEl) {
-                console.error(`워드클라우드 영역의 DOM 요소를 찾을 수 없습니다: ${questionId}`);
-                return;
-            }
+    function resetWordCloudArea(questionId) {
+        const previewImageEl = document.getElementById(`preview-${questionId}`);
+        const instructionTextEl = document.getElementById(`instruction-${questionId}`);
+        const uploadLabelEl = document.querySelector(`label[for='upload-${questionId}']`);
+        const interactionAreaEl = document.getElementById(`interaction-area-${questionId}`);
+        const uploadInputEl = document.getElementById(`upload-${questionId}`);
 
-            previewImageEl.src = "#";
-            previewImageEl.style.display = 'none';
-            previewImageEl.removeAttribute('title');
-            
-            instructionTextEl.style.display = 'block';
-            uploadLabelEl.style.display = 'inline-block'; 
-            
-            interactionAreaEl.style.cursor = 'default';
-
-            if (uploadInputEl) {
-                uploadInputEl.value = ''; 
-            }
+        if (!previewImageEl || !instructionTextEl || !uploadLabelEl || !interactionAreaEl) {
+            console.error(`워드클라우드 영역의 DOM 요소를 찾을 수 없습니다: ${questionId}`);
+            return;
         }
 
-        function renderSummary() {
-            const summaryDiv = document.createElement('div');
-            summaryDiv.className = 'content-card text-center mb-10';
-            summaryDiv.innerHTML = `<p class="text-xl font-semibold text-gray-700">총 설문 참여 인원: ${reportData.totalRespondents}명</p>`;
-            reportContentEl.appendChild(summaryDiv);
+        previewImageEl.src = "#";
+        previewImageEl.style.display = 'none';
+        previewImageEl.removeAttribute('title');
+        
+        instructionTextEl.style.display = 'block';
+        uploadLabelEl.style.display = 'inline-block'; 
+        
+        interactionAreaEl.style.cursor = 'default';
+
+        if (uploadInputEl) {
+            uploadInputEl.value = ''; 
         }
+    }
 
-        function createPieChart(chartInfo) {
-            const chartSectionDiv = document.createElement('div');
-            chartSectionDiv.className = 'content-card';
-            chartSectionDiv.innerHTML = `
-                <h2 class="question-title">${chartInfo.questionText}</h2>
-                <p class="response-count">총 응답: ${chartInfo.totalResponses}명</p>
-                <div class="chart-container">
-                    <canvas id="${chartInfo.id}"></canvas>
-                </div>
-            `;
-            reportContentEl.appendChild(chartSectionDiv);
+    function renderSummary() {
+        const summaryDiv = document.createElement('div');
+        summaryDiv.className = 'content-card text-center mb-10';
+        summaryDiv.innerHTML = `<p class="text-xl font-semibold text-gray-700">총 설문 참여 인원: ${reportData.totalRespondents}명</p>`;
+        reportContentEl.appendChild(summaryDiv);
+    }
 
-            const ctx = document.getElementById(chartInfo.id).getContext('2d');
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: chartInfo.labels,
-                    datasets: [{
-                        label: '응답 수',
-                        data: chartInfo.data,
-                        backgroundColor: chartColors.slice(0, chartInfo.data.length),
-                        borderColor: '#FFFFFF',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                font: { size: 12, family: 'Inter, sans-serif' },
-                                padding: 15,
-                                generateLabels: function(chart) {
-                                    const data = chart.data;
-                                    if (data.labels.length && data.datasets.length) {
-                                        const total = data.datasets[0].data.reduce((sum, value) => sum + value, 0);
-                                        return data.labels.map((label, i) => {
-                                            const meta = chart.getDatasetMeta(0);
-                                            const style = meta.controller.getStyle(i);
-                                            const value = data.datasets[0].data[i];
-                                            const percentage = total > 0 ? (value / total * 100).toFixed(1) + '%' : '0%';
-                                            return {
-                                                text: `${label}: ${value}명 (${percentage})`,
-                                                fillStyle: style.backgroundColor,
-                                                strokeStyle: style.borderColor,
-                                                lineWidth: style.borderWidth,
-                                                hidden: !chart.getDataVisibility(i),
-                                                index: i
-                                            };
-                                        });
-                                    }
-                                    return [];
+    function createPieChart(chartInfo) {
+        const chartSectionDiv = document.createElement('div');
+        chartSectionDiv.className = 'content-card';
+        chartSectionDiv.innerHTML = `
+            <h2 class="question-title">${chartInfo.questionText}</h2>
+            <p class="response-count">총 응답: ${chartInfo.totalResponses}명</p>
+            <div class="chart-container">
+                <canvas id="${chartInfo.id}"></canvas>
+            </div>
+        `;
+        reportContentEl.appendChild(chartSectionDiv);
+
+        const ctx = document.getElementById(chartInfo.id).getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: chartInfo.labels,
+                datasets: [{
+                    label: '응답 수',
+                    data: chartInfo.data,
+                    backgroundColor: chartColors.slice(0, chartInfo.data.length),
+                    borderColor: '#FFFFFF',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { 
+                            font: { size: 12, family: 'Inter, Noto Sans KR, sans-serif' }, 
+                            padding: 15,
+                            generateLabels: function(chart) {
+                                const data = chart.data;
+                                if (data.labels.length && data.datasets.length) {
+                                    const total = data.datasets[0].data.reduce((acc, val) => acc + val, 0);
+                                    return data.labels.map((label, i) => {
+                                        const value = data.datasets[0].data[i];
+                                        const percentage = total > 0 ? (value / total * 100).toFixed(1) + '%' : '0%';
+                                        return {
+                                            text: `${label}: ${value}명 (${percentage})`,
+                                            fillStyle: data.datasets[0].backgroundColor[i],
+                                            hidden: isNaN(data.datasets[0].data[i]) || chart.getDatasetMeta(0).data[i].hidden,
+                                            index: i
+                                        };
+                                    });
                                 }
+                                return [];
                             }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: (context) => {
-                                    let label = context.label || '';
-                                    if (label) label += ': ';
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = total > 0 ? (context.parsed / total * 100).toFixed(1) + '%' : '0%';
-                                    return `${context.raw}명 (${percentage})`;
-                                }
-                            }
-                        },
-                        datalabels: {
-                            display: true,
-                            formatter: (value, context) => {
-                                const total = context.dataset.data.reduce((acc, dataVal) => acc + dataVal, 0);
-                                const percentage = total > 0 ? (value / total * 100).toFixed(1) + '%' : '0%';
-                                return value === 0 ? '' : `${value}명\n(${percentage})`;
-                            },
-                            color: '#fff',
-                            textAlign: 'center',
-                            font: { weight: 'bold', size: 10 },
-                            textStrokeColor: 'rgba(0,0,0,0.5)',
-                            textStrokeWidth: 1,
-                            anchor: 'center',
-                            align: 'center',
                         }
                     },
-                    cutout: '50%'
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => {
+                                let label = context.label || '';
+                                if (label) label += ': ';
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = total > 0 ? (context.parsed / total * 100).toFixed(1) + '%' : '0%';
+                                return `${context.raw}명 (${percentage})`;
+                            }
+                        }
+                    },
+                    datalabels: {
+                        display: true,
+                        formatter: (value, context) => {
+                            const total = context.dataset.data.reduce((acc, dataVal) => acc + dataVal, 0);
+                            const percentage = total > 0 ? (value / total * 100).toFixed(1) + '%' : '0%';
+                            if (value === 0) return ''; // 값이 0이면 표시 안 함
+                            return `${value}명\n(${percentage})`;
+                        },
+                        color: '#fff',
+                        textAlign: 'center',
+                        font: { weight: 'bold', size: 10 },
+                        textStrokeColor: 'rgba(0,0,0,0.5)',
+                        textStrokeWidth: 1,
+                        anchor: 'center',
+                        align: 'center',
+                    }
+                },
+                cutout: '50%'
+            }
+        });
+    }
+
+    function renderOpenEndedQuestion(questionInfo) {
+        const questionId = questionInfo.id;
+        const questionSectionDiv = document.createElement('div');
+        questionSectionDiv.className = 'content-card';
+
+        let responsesHtml = '';
+        const validResponses = questionInfo.responses.filter(response => response && response.trim() !== "" && response.trim() !== "-");
+        
+        validResponses.forEach(response => {
+            responsesHtml += `<div class="response-card">${response.replace(/\n/g, '<br>')}</div>`; // 줄바꿈 처리
+        });
+
+        questionSectionDiv.innerHTML = `
+            <h2 class="question-title">${questionInfo.questionText}</h2>
+            <div id="interaction-area-${questionId}" class="wordcloud-interaction-area" tabindex="0">
+                <img id="preview-${questionId}" src="#" alt="워드클라우드 미리보기" class="wordcloud-image-preview">
+                <p id="instruction-${questionId}" class="paste-instruction">여기에 워드클라우드 이미지를 붙여넣거나(Ctrl+V) 아래 버튼으로 업로드하세요.</p>
+                <label for="upload-${questionId}" class="image-upload-label">파일에서 이미지 선택</label>
+                <input type="file" id="upload-${questionId}" class="image-upload-input" accept="image/*">
+            </div>
+            <h3 class="text-md font-medium text-gray-600 mt-4 mb-2">개별 응답 (${validResponses.length}개):</h3>
+            <div class="open-ended-response-grid">${responsesHtml || '<p class="text-gray-500 p-2">유효한 응답이 없습니다.</p>'}</div> 
+        `;
+        reportContentEl.appendChild(questionSectionDiv);
+
+        const uploadInputEl = document.getElementById(`upload-${questionId}`);
+        const interactionAreaEl = document.getElementById(`interaction-area-${questionId}`);
+
+        if (uploadInputEl) {
+            uploadInputEl.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => displayWordCloudImage(e.target.result, questionId);
+                    reader.readAsDataURL(file);
+                } else {
+                    if (file) alert("이미지 파일만 업로드할 수 있습니다.");
+                    uploadInputEl.value = '';
                 }
             });
         }
 
-        function renderOpenEndedQuestion(questionInfo) {
-            const questionId = questionInfo.id;
-            const questionSectionDiv = document.createElement('div');
-            questionSectionDiv.className = 'content-card';
-
-            let responsesHtml = '';
-            questionInfo.responses.forEach(response => {
-                if (response && response.trim() !== "") {
-                    responsesHtml += `<div class="response-card">${response.replace(/\n/g, '<br>')}</div>`; // 줄바꿈을 <br>로 변환
-                }
-            });
-
-            questionSectionDiv.innerHTML = `
-                <h2 class="question-title">${questionInfo.questionText}</h2>
-                <div id="interaction-area-${questionId}" class="wordcloud-interaction-area" tabindex="0">
-                    <img id="preview-${questionId}" src="#" alt="워드클라우드 미리보기" class="wordcloud-image-preview">
-                    <p id="instruction-${questionId}" class="paste-instruction">여기에 워드클라우드 이미지를 붙여넣거나(Ctrl+V) 아래 버튼으로 업로드하세요.</p>
-                    <label for="upload-${questionId}" class="image-upload-label">파일에서 이미지 선택</label>
-                    <input type="file" id="upload-${questionId}" class="image-upload-input" accept="image/*">
-                </div>
-                <h3 class="text-md font-medium text-gray-600 mt-4 mb-2">개별 응답 (${questionInfo.responses.length}개):</h3>
-                <div class="open-ended-response-grid">${responsesHtml}</div> 
-            `;
-            reportContentEl.appendChild(questionSectionDiv);
-
-            const uploadInputEl = document.getElementById(`upload-${questionId}`);
-            const interactionAreaEl = document.getElementById(`interaction-area-${questionId}`);
-
-            if (uploadInputEl) {
-                uploadInputEl.addEventListener('change', (event) => {
-                    const file = event.target.files[0];
-                    if (file && file.type.startsWith('image/')) {
-                        const reader = new FileReader();
-                        reader.onload = (e) => displayWordCloudImage(e.target.result, questionId);
-                        reader.readAsDataURL(file);
+        if (interactionAreaEl) {
+            interactionAreaEl.addEventListener('paste', (event) => {
+                const currentPreviewImageEl = document.getElementById(`preview-${questionId}`);
+                
+                if (currentPreviewImageEl && currentPreviewImageEl.style.display === 'block') {
+                    if (confirm("이미 삽입된 이미지가 있습니다. 변경하시겠습니까?")) {
+                        resetWordCloudArea(questionId);
                     } else {
-                        if (file) alert("이미지 파일만 업로드할 수 있습니다.");
-                        uploadInputEl.value = ''; 
+                        event.preventDefault(); 
+                        return;
                     }
-                });
-            }
-
-            if (interactionAreaEl) {
-                interactionAreaEl.addEventListener('paste', (event) => {
-                    const currentPreviewImageEl = document.getElementById(`preview-${questionId}`);
-                    
-                    if (currentPreviewImageEl && currentPreviewImageEl.style.display === 'block') {
-                        if (confirm("이미 삽입된 이미지가 있습니다. 변경하시겠습니까?")) {
-                            resetWordCloudArea(questionId);
-                        } else {
-                            event.preventDefault(); 
-                            return;
-                        }
-                    }
-                    
-                    event.preventDefault(); 
-                    const items = (event.clipboardData || window.clipboardData || event.originalEvent.clipboardData).items;
-                    let foundImage = false;
-                    for (const item of items) {
-                        if (item.type.indexOf('image') !== -1) {
-                            const blob = item.getAsFile();
+                }
+                
+                event.preventDefault(); 
+                const items = (event.clipboardData || window.clipboardData).items; // window.clipboardData for IE
+                let foundImage = false;
+                for (const item of items) {
+                    if (item.type.indexOf('image') !== -1) {
+                        const blob = item.getAsFile();
+                        if (blob) {
                             const reader = new FileReader();
                             reader.onload = (e) => displayWordCloudImage(e.target.result, questionId);
                             reader.readAsDataURL(blob);
@@ -453,24 +464,25 @@
                             break;
                         }
                     }
-                    if (!foundImage) {
-                        alert("클립보드에 붙여넣을 수 있는 이미지가 없습니다.");
-                    }
-                });
-            }
+                }
+                if (!foundImage) {
+                    alert("클립보드에 붙여넣을 수 있는 이미지가 없습니다.");
+                }
+            });
         }
+    }
 
-        // --- 보고서 내용 생성 실행 ---
-        renderSummary();
+    // --- 보고서 내용 생성 실행 ---
+    renderSummary();
 
-        reportData.pieChartQuestions.forEach(pieQuestion => {
-            createPieChart(pieQuestion);
-        });
+    reportData.pieChartQuestions.forEach(pieQuestion => {
+        createPieChart(pieQuestion);
+    });
 
-        reportData.openEndedQuestions.forEach(openQuestion => {
-            renderOpenEndedQuestion(openQuestion);
-        });
+    reportData.openEndedQuestions.forEach(openQuestion => {
+        renderOpenEndedQuestion(openQuestion);
+    });
 
-    </script>
+</script>
 </body>
 </html>
